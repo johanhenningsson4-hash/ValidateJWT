@@ -70,6 +70,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="PUSH_NOW.md" />
     <None Include="README.md" />
     <None Include="PROJECT_ANALYSIS.md" />
     <None Include="ANALYSIS_SUMMARY.md" />
