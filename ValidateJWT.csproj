@@ -61,13 +61,17 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="BuildNuGetPackage.bat" />
     <None Include="CommitAndPush.ps1" />
+    <None Include="CreateNuGetPackage-DevCmd.ps1" />
     <None Include="CreateNuGetPackage.ps1" />
+    <None Include="CREATE_PACKAGE_NOW.md" />
     <None Include="FINAL_STATUS_COMPLETE.md" />
     <None Include="FINAL_SUCCESS.md" />
     <None Include="MSBUILD_FIX.md" />
     <None Include="NAMESPACE_CHANGE_SUMMARY.md" />
     <None Include="NUGET_GUIDE.md" />
+    <None Include="NUGET_PACKAGE_CREATION.md" />
     <None Include="NUGET_PACKAGE_READY.md" />
     <None Include="NUGET_QUICK_START.md" />
     <None Include="packages.config" />
