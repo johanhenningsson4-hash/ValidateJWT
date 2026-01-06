@@ -61,8 +61,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="FINAL_SUCCESS.md" />
-    <None Include="NAMESPACE_CHANGE_SUMMARY.md" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

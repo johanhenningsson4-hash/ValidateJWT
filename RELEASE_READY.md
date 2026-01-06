@@ -15,7 +15,7 @@ All release files have been created and are ready for deployment:
    - Version updated to 1.0.0.0
    - Title updated to "ValidateJWT"
    - Description added
-   - Copyright updated to 2025
+   - Copyright updated to 2026
 
 ### ? New Release Files
 2. **RELEASE_NOTES_v1.0.0.md** (Comprehensive release notes)
@@ -77,7 +77,7 @@ git push origin v1.0.0
 - **Tag:** v1.0.0
 - **Title:** ValidateJWT v1.0.0 - Initial Release
 - **Type:** Initial Release
-- **Date:** January 2025
+- **Date:** January 2026
 
 ### Release Highlights
 - ? First official production release
@@ -198,7 +198,7 @@ First official release of **ValidateJWT** - a lightweight .NET Framework 4.8 lib
 ## ?? Quick Start
 
 ```csharp
-using TPDotNet.MTR.Common;
+using ValidateJWT.Common;
 
 string jwt = "eyJhbGci...";
 if (ValidateJWT.IsExpired(jwt))
@@ -350,5 +350,5 @@ cd C:\Jobb\ValidateJWT
 
 ---
 
-*ValidateJWT v1.0.0 - January 2025*  
+*ValidateJWT v1.0.0 - January 2026*  
 *Released with ?? by the ValidateJWT team*

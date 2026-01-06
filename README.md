@@ -33,7 +33,7 @@ git clone https://github.com/johanhenningsson4-hash/ValidateJWT.git
 ### Check if a JWT is Expired
 
 ```csharp
-using TPDotNet.MTR.Common;
+using ValidateJWT.Common;
 
 string jwt = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...";
 

@@ -1,7 +1,7 @@
 # ValidateJWT Project Analysis (Updated with Tests)
 
 **Repository:** https://github.com/johanhenningsson4-hash/ValidateJWT  
-**Analysis Date:** January 2025  
+**Analysis Date:** January 2026  
 **Target Framework:** .NET Framework 4.8  
 **Test Coverage:** 58+ unit tests added ?
 
@@ -76,7 +76,7 @@ ValidateJWT/
 ## ?? Core Functionality
 
 ### Main Class: `ValidateJWT`
-**Namespace:** `TPDotNet.MTR.Common`  
+**Namespace:** `ValidateJWT.Common`  
 **Type:** Static class (utility)
 
 ### Public API Methods
@@ -243,8 +243,8 @@ The library extracts and parses the **payload** section of a JWT:
 
 2. **Namespace Mismatch**
    ```csharp
-   namespace TPDotNet.MTR.Common  // ValidateJWT.cs
-   namespace TPDotnet.MTR.Sweden.TechServices  // Log.cs
+   namespace ValidateJWT.Common  // ValidateJWT.cs
+   namespace ValidateJWT.Sweden.TechServices  // Log.cs
    ```
    - **Issue:** Log.cs is in different namespace and appears unused
    - **Recommendation:** Remove Log.cs or align namespaces
@@ -294,7 +294,7 @@ The library extracts and parses the **payload** section of a JWT:
 ? Prevents using expired tokens  
 ? **Verified by 58+ unit tests** ? NEW
 
-### What It DOES NOT Do
+### What It DOES not Do
 ? Verify token signature  
 ? Validate token issuer  
 ? Check token audience  
@@ -539,5 +539,5 @@ The project is now **production-ready from a testing perspective**. Once the ext
 ---
 
 **Analysis Version:** 2.0  
-**Last Updated:** January 2025  
+**Last Updated:** January 2026  
 **Status:** ? Significantly improved with comprehensive test suite

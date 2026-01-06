@@ -1,6 +1,7 @@
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TPDotNet.MTR.Common;
+using Johan.Common;
+using static Johan.Common.ValidateJWT;
 
 namespace ValidateJWT.Tests
 {
@@ -16,7 +17,7 @@ namespace ValidateJWT.Tests
             var jwt = JwtTestHelper.CreateJwtWithExpiration(DateTime.UtcNow.AddHours(-1));
 
             // Act
-            var result = ValidateJWT.IsExpired(jwt);
+            var result = IsExpired(jwt);
 
             // Assert
             Assert.IsTrue(result, "Token expired 1 hour ago should be marked as expired");
@@ -29,7 +30,7 @@ namespace ValidateJWT.Tests
             var jwt = JwtTestHelper.CreateJwtWithExpiration(DateTime.UtcNow.AddHours(1));
 
             // Act
-            var result = ValidateJWT.IsExpired(jwt);
+            var result = IsExpired(jwt);
 
             // Assert
             Assert.IsFalse(result, "Token expiring in 1 hour should not be marked as expired");
@@ -43,7 +44,7 @@ namespace ValidateJWT.Tests
             var clockSkew = TimeSpan.FromMinutes(5);
 
             // Act
-            var result = ValidateJWT.IsExpired(jwt, clockSkew);
+            var result = IsExpired(jwt, clockSkew);
 
             // Assert
             Assert.IsFalse(result, "Token expiring now should not be expired with 5-minute clock skew");
@@ -57,7 +58,7 @@ namespace ValidateJWT.Tests
             var clockSkew = TimeSpan.FromMinutes(5);
 
             // Act
-            var result = ValidateJWT.IsExpired(jwt, clockSkew);
+            var result = IsExpired(jwt, clockSkew);
 
             // Assert
             Assert.IsTrue(result, "Token expired 10 minutes ago should be expired even with 5-minute clock skew");
@@ -71,7 +72,7 @@ namespace ValidateJWT.Tests
             var clockSkew = TimeSpan.FromMinutes(10);
 
             // Act
-            var result = ValidateJWT.IsExpired(jwt, clockSkew);
+            var result = IsExpired(jwt, clockSkew);
 
             // Assert
             Assert.IsFalse(result, "Token expired 8 minutes ago should not be expired with 10-minute clock skew");
@@ -86,7 +87,7 @@ namespace ValidateJWT.Tests
             var testTime = new DateTime(2024, 1, 15, 11, 0, 0, DateTimeKind.Utc);
 
             // Act
-            var result = ValidateJWT.IsExpired(jwt, TimeSpan.FromMinutes(5), testTime);
+            var result = IsExpired(jwt, TimeSpan.FromMinutes(5), testTime);
 
             // Assert
             Assert.IsFalse(result, "Token should not be expired when testing at a time before expiration");
@@ -96,7 +97,7 @@ namespace ValidateJWT.Tests
         public void IsExpired_NullToken_ReturnsFalse()
         {
             // Act
-            var result = ValidateJWT.IsExpired(null);
+            var result = IsExpired(null);
 
             // Assert
             Assert.IsFalse(result, "Null token should return false (no expiration claim found)");
@@ -106,7 +107,7 @@ namespace ValidateJWT.Tests
         public void IsExpired_EmptyToken_ReturnsFalse()
         {
             // Act
-            var result = ValidateJWT.IsExpired(string.Empty);
+            var result = IsExpired(string.Empty);
 
             // Assert
             Assert.IsFalse(result, "Empty token should return false (no expiration claim found)");
@@ -119,7 +120,7 @@ namespace ValidateJWT.Tests
             var jwt = JwtTestHelper.CreateMalformedJwt(1);
 
             // Act
-            var result = ValidateJWT.IsExpired(jwt);
+            var result = IsExpired(jwt);
 
             // Assert
             Assert.IsFalse(result, "Malformed token should return false (no expiration claim found)");
@@ -132,7 +133,7 @@ namespace ValidateJWT.Tests
             var jwt = JwtTestHelper.CreateJwtWithoutExpiration();
 
             // Act
-            var result = ValidateJWT.IsExpired(jwt);
+            var result = IsExpired(jwt);
 
             // Assert
             Assert.IsFalse(result, "Token without expiration claim should return false");
@@ -145,7 +146,7 @@ namespace ValidateJWT.Tests
             var jwt = JwtTestHelper.CreateJwtWithInvalidBase64();
 
             // Act
-            var result = ValidateJWT.IsExpired(jwt);
+            var result = IsExpired(jwt);
 
             // Assert
             Assert.IsFalse(result, "Token with invalid Base64 should return false");
@@ -162,7 +163,7 @@ namespace ValidateJWT.Tests
             var jwt = JwtTestHelper.CreateJwtWithExpiration(DateTime.UtcNow.AddHours(1));
 
             // Act
-            var result = ValidateJWT.IsValidNow(jwt);
+            var result = IsValidNow(jwt);
 
             // Assert
             Assert.IsTrue(result, "Token expiring in 1 hour should be valid now");
@@ -175,7 +176,7 @@ namespace ValidateJWT.Tests
             var jwt = JwtTestHelper.CreateJwtWithExpiration(DateTime.UtcNow.AddHours(-1));
 
             // Act
-            var result = ValidateJWT.IsValidNow(jwt);
+            var result = IsValidNow(jwt);
 
             // Assert
             Assert.IsFalse(result, "Token expired 1 hour ago should not be valid now");
@@ -188,7 +189,7 @@ namespace ValidateJWT.Tests
             var jwt = JwtTestHelper.CreateJwtWithExpiration(DateTime.UtcNow);
 
             // Act
-            var result = ValidateJWT.IsValidNow(jwt);
+            var result = IsValidNow(jwt);
 
             // Assert
             Assert.IsTrue(result, "Token expiring now should be valid with default clock skew");
@@ -202,7 +203,7 @@ namespace ValidateJWT.Tests
             var clockSkew = TimeSpan.FromMinutes(5);
 
             // Act
-            var result = ValidateJWT.IsValidNow(jwt, clockSkew);
+            var result = IsValidNow(jwt, clockSkew);
 
             // Assert
             Assert.IsFalse(result, "Token expired beyond clock skew should not be valid");
@@ -217,7 +218,7 @@ namespace ValidateJWT.Tests
             var testTime = new DateTime(2024, 1, 15, 11, 0, 0, DateTimeKind.Utc);
 
             // Act
-            var result = ValidateJWT.IsValidNow(jwt, TimeSpan.FromMinutes(5), testTime);
+            var result = IsValidNow(jwt, TimeSpan.FromMinutes(5), testTime);
 
             // Assert
             Assert.IsTrue(result, "Token should be valid when testing at a time before expiration");
@@ -227,7 +228,7 @@ namespace ValidateJWT.Tests
         public void IsValidNow_NullToken_ReturnsFalse()
         {
             // Act
-            var result = ValidateJWT.IsValidNow(null);
+            var result = IsValidNow(null);
 
             // Assert
             Assert.IsFalse(result, "Null token should return false");
@@ -237,7 +238,7 @@ namespace ValidateJWT.Tests
         public void IsValidNow_EmptyToken_ReturnsFalse()
         {
             // Act
-            var result = ValidateJWT.IsValidNow(string.Empty);
+            var result = IsValidNow(string.Empty);
 
             // Assert
             Assert.IsFalse(result, "Empty token should return false");
@@ -250,7 +251,7 @@ namespace ValidateJWT.Tests
             var jwt = JwtTestHelper.CreateMalformedJwt(1);
 
             // Act
-            var result = ValidateJWT.IsValidNow(jwt);
+            var result = IsValidNow(jwt);
 
             // Assert
             Assert.IsFalse(result, "Malformed token should return false");
@@ -263,7 +264,7 @@ namespace ValidateJWT.Tests
             var jwt = JwtTestHelper.CreateJwtWithoutExpiration();
 
             // Act
-            var result = ValidateJWT.IsValidNow(jwt);
+            var result = IsValidNow(jwt);
 
             // Assert
             Assert.IsFalse(result, "Token without expiration should return false");
@@ -281,7 +282,7 @@ namespace ValidateJWT.Tests
             var jwt = JwtTestHelper.CreateJwtWithExpiration(expectedExpiration);
 
             // Act
-            var result = ValidateJWT.GetExpirationUtc(jwt);
+            var result = GetExpirationUtc(jwt);
 
             // Assert
             Assert.IsNotNull(result, "Expiration should not be null for valid token");
@@ -296,7 +297,7 @@ namespace ValidateJWT.Tests
             var jwt = JwtTestHelper.CreateJwtWithExpiration(expectedExpiration);
 
             // Act
-            var result = ValidateJWT.GetExpirationUtc(jwt);
+            var result = GetExpirationUtc(jwt);
 
             // Assert
             Assert.IsNotNull(result, "Expiration should not be null even for expired token");
@@ -311,7 +312,7 @@ namespace ValidateJWT.Tests
             var jwt = JwtTestHelper.CreateJwtWithExpiration(expectedExpiration);
 
             // Act
-            var result = ValidateJWT.GetExpirationUtc(jwt);
+            var result = GetExpirationUtc(jwt);
 
             // Assert
             Assert.IsNotNull(result, "Expiration should not be null for future token");
@@ -322,7 +323,7 @@ namespace ValidateJWT.Tests
         public void GetExpirationUtc_NullToken_ReturnsNull()
         {
             // Act
-            var result = ValidateJWT.GetExpirationUtc(null);
+            var result = GetExpirationUtc(null);
 
             // Assert
             Assert.IsNull(result, "Null token should return null expiration");
@@ -332,7 +333,7 @@ namespace ValidateJWT.Tests
         public void GetExpirationUtc_EmptyToken_ReturnsNull()
         {
             // Act
-            var result = ValidateJWT.GetExpirationUtc(string.Empty);
+            var result = GetExpirationUtc(string.Empty);
 
             // Assert
             Assert.IsNull(result, "Empty token should return null expiration");
@@ -345,7 +346,7 @@ namespace ValidateJWT.Tests
             var jwt = JwtTestHelper.CreateMalformedJwt(1);
 
             // Act
-            var result = ValidateJWT.GetExpirationUtc(jwt);
+            var result = GetExpirationUtc(jwt);
 
             // Assert
             Assert.IsNull(result, "Malformed token should return null expiration");
@@ -358,7 +359,7 @@ namespace ValidateJWT.Tests
             var jwt = JwtTestHelper.CreateJwtWithoutExpiration();
 
             // Act
-            var result = ValidateJWT.GetExpirationUtc(jwt);
+            var result = GetExpirationUtc(jwt);
 
             // Assert
             Assert.IsNull(result, "Token without expiration claim should return null");
@@ -371,7 +372,7 @@ namespace ValidateJWT.Tests
             var jwt = JwtTestHelper.CreateJwtWithInvalidBase64();
 
             // Act
-            var result = ValidateJWT.GetExpirationUtc(jwt);
+            var result = GetExpirationUtc(jwt);
 
             // Assert
             Assert.IsNull(result, "Token with invalid Base64 should return null");
@@ -384,7 +385,7 @@ namespace ValidateJWT.Tests
             var jwt = JwtTestHelper.CreateJwtWithInvalidJson();
 
             // Act
-            var result = ValidateJWT.GetExpirationUtc(jwt);
+            var result = GetExpirationUtc(jwt);
 
             // Assert
             Assert.IsNull(result, "Token with invalid JSON should return null");
@@ -401,7 +402,7 @@ namespace ValidateJWT.Tests
             var jwt = JwtTestHelper.CreateJwtWithExpiration(new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc));
 
             // Act
-            var result = ValidateJWT.IsExpired(jwt);
+            var result = IsExpired(jwt);
 
             // Assert
             Assert.IsTrue(result, "Very old token should be expired");
@@ -414,7 +415,7 @@ namespace ValidateJWT.Tests
             var jwt = JwtTestHelper.CreateJwtWithExpiration(new DateTime(2050, 12, 31, 23, 59, 59, DateTimeKind.Utc));
 
             // Act
-            var result = ValidateJWT.IsValidNow(jwt);
+            var result = IsValidNow(jwt);
 
             // Assert
             Assert.IsTrue(result, "Token expiring far in future should be valid");
@@ -427,7 +428,7 @@ namespace ValidateJWT.Tests
             var jwt = JwtTestHelper.CreateJwtWithExpiration(DateTime.UtcNow.AddSeconds(-1));
 
             // Act
-            var result = ValidateJWT.IsExpired(jwt, TimeSpan.Zero);
+            var result = IsExpired(jwt, TimeSpan.Zero);
 
             // Assert
             Assert.IsTrue(result, "Token expired 1 second ago should be expired with zero clock skew");
@@ -441,7 +442,7 @@ namespace ValidateJWT.Tests
             var clockSkew = TimeSpan.FromMinutes(30);
 
             // Act
-            var result = ValidateJWT.IsValidNow(jwt, clockSkew);
+            var result = IsValidNow(jwt, clockSkew);
 
             // Assert
             Assert.IsTrue(result, "Token should be valid with large clock skew");
@@ -455,8 +456,8 @@ namespace ValidateJWT.Tests
             var jwt = JwtTestHelper.CreateJwtWithExpiration(expectedExpiration);
 
             // Act
-            var result1 = ValidateJWT.GetExpirationUtc(jwt);
-            var result2 = ValidateJWT.GetExpirationUtc(jwt);
+            var result1 = GetExpirationUtc(jwt);
+            var result2 = GetExpirationUtc(jwt);
 
             // Assert
             Assert.IsNotNull(result1);
@@ -468,7 +469,7 @@ namespace ValidateJWT.Tests
         public void IsExpired_WhitespaceToken_ReturnsFalse()
         {
             // Act
-            var result = ValidateJWT.IsExpired("   ");
+            var result = IsExpired("   ");
 
             // Assert
             Assert.IsFalse(result, "Whitespace token should return false");
@@ -478,7 +479,7 @@ namespace ValidateJWT.Tests
         public void IsValidNow_WhitespaceToken_ReturnsFalse()
         {
             // Act
-            var result = ValidateJWT.IsValidNow("   ");
+            var result = IsValidNow("   ");
 
             // Assert
             Assert.IsFalse(result, "Whitespace token should return false");

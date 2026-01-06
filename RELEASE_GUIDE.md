@@ -163,7 +163,7 @@ cd ValidateJWT
 ## ?? Usage Example
 
 ```csharp
-using TPDotNet.MTR.Common;
+using ValidateJWT.Common;
 
 string jwt = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...";
 
@@ -216,12 +216,12 @@ DateTime? expiration = ValidateJWT.GetExpirationUtc(jwt);
 
 ---
 
-Released with ?? - January 2025
+Released with ?? - January 2026
 ```
 
 ---
 
-## ? Post-Release Checklist
+## ?? Post-Release Checklist
 
 After creating the release:
 
@@ -300,4 +300,4 @@ Once completed, your ValidateJWT v1.0.0 release will be:
 
 ---
 
-*This guide was generated for ValidateJWT v1.0.0 release - January 2025*
+*This guide was generated for ValidateJWT v1.0.0 release - January 2026*

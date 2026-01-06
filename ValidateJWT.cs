@@ -1,32 +1,35 @@
-﻿
-using System;
+﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.Text;
 
-namespace TPDotNet.MTR.Common
+namespace Johan.Common
 {
     [DataContract]
     internal class JwtTimeClaims
     {
-        // Claims can be numbers or strings; store as string and parse.
         [DataMember(Name = "exp")]
         public string Exp { get; set; }
-
-        //[DataMember(Name = "nbf")]
-        //public string Nbf { get; set; }
-
-        //[DataMember(Name = "iat")]
-        //public string Iat { get; set; }
     }
 
-    
-    
-
+    /// <summary>
+    /// Provides lightweight validation of JWT token expiration times.
+    /// This class does NOT verify JWT signatures - use only for time-based pre-validation.
+    /// </summary>
     public static class ValidateJWT
     {
-        private static TPDotnet.Base.Service.TPBaseLogging objLog;
+        /// <summary>
+        /// Checks if a JWT token has expired based on its expiration claim.
+        /// </summary>
+        /// <param name="jwt">The JWT token string to validate</param>
+        /// <param name="clockSkew">Optional clock skew tolerance to account for time synchronization issues (default: 5 minutes)</param>
+        /// <param name="nowUtc">Optional current UTC time for testing purposes (default: DateTime.UtcNow)</param>
+        /// <returns>True if the token has expired; false if the token is still valid or if no expiration claim is found</returns>
+        /// <remarks>
+        /// Returns true on errors as a fail-safe approach. Does NOT verify JWT signatures.
+        /// </remarks>
         public static bool IsExpired(string jwt, TimeSpan? clockSkew = null, DateTime? nowUtc = null)
         {
             try
@@ -40,15 +43,21 @@ namespace TPDotNet.MTR.Common
             }
             catch (Exception ex)
             {
-                if (objLog == null)
-                {
-                    objLog = new TPDotnet.Base.Service.TPBaseLogging("ValidateJWT");
-                }
-                objLog.WriteLogError("ValidateJWT", "checkJWTExpired", ex);
+                Trace.WriteLine($"ValidateJWT.IsExpired error: {ex.Message}");
                 return true;
             }
         }
 
+        /// <summary>
+        /// Checks if a JWT token is currently valid based on its expiration claim.
+        /// </summary>
+        /// <param name="jwt">The JWT token string to validate</param>
+        /// <param name="clockSkew">Optional clock skew tolerance to account for time synchronization issues (default: 5 minutes)</param>
+        /// <param name="nowUtc">Optional current UTC time for testing purposes (default: DateTime.UtcNow)</param>
+        /// <returns>True if the token is currently valid; false if expired or invalid</returns>
+        /// <remarks>
+        /// Does NOT verify JWT signatures. Use only for time-based pre-validation.
+        /// </remarks>
         public static bool IsValidNow(string jwt, TimeSpan? clockSkew = null, DateTime? nowUtc = null)
         {
             var now = nowUtc ?? DateTime.UtcNow;
@@ -57,28 +66,23 @@ namespace TPDotNet.MTR.Common
             var claims = ParseClaims(jwt);
             if (claims == null) return false;
 
-            //var nbf = ParseUnix(claims.Nbf);
             var exp = ParseUnix(claims.Exp);
-
-            //if (nbf != null && now < nbf.Value.Subtract(skew)) return false;
             if (exp != null && now > exp.Value.Add(skew)) return false;
 
             return true;
         }
 
+        /// <summary>
+        /// Extracts the expiration time from a JWT token.
+        /// </summary>
+        /// <param name="jwt">The JWT token string to parse</param>
+        /// <returns>The expiration time in UTC, or null if the token is invalid or has no expiration claim</returns>
         public static DateTime? GetExpirationUtc(string jwt)
         {
             var claims = ParseClaims(jwt);
             if (claims == null) return null;
             return ParseUnix(claims.Exp);
         }
-
-        //public static DateTime? GetIssuedAtUtc(string jwt)
-        //{
-        //    var claims = ParseClaims(jwt);
-        //    if (claims == null) return null;
-        //    return ParseUnix(claims.Iat);
-        //}
 
         private static JwtTimeClaims ParseClaims(string jwt)
         {
@@ -121,20 +125,34 @@ namespace TPDotNet.MTR.Common
             }
         }
 
+        /// <summary>
+        /// Decodes a Base64Url encoded string to a byte array.
+        /// </summary>
+        /// <param name="input">Base64Url encoded string</param>
+        /// <returns>Decoded byte array</returns>
         public static byte[] Base64UrlDecode(string input)
         {
-            if (input == null) input = string.Empty;
-            string s = input.Replace('-', '+').Replace('_', '/');
-
-            switch (s.Length % 4)
+            if (string.IsNullOrEmpty(input))
             {
-                case 2: s += "=="; break;
-                case 3: s += "="; break;
-                case 0: break;
-                default: throw new FormatException("Invalid Base64Url length.");
+                return Array.Empty<byte>();
             }
 
-            return Convert.FromBase64String(s);
+            string base64 = input.Replace('-', '+').Replace('_', '/');
+            int padding = base64.Length % 4;
+            if (padding == 2)
+            {
+                base64 += "==";
+            }
+            else if (padding == 3)
+            {
+                base64 += "=";
+            }
+            else if (padding == 1)
+            {
+                throw new FormatException("Invalid Base64Url string length.");
+            }
+
+            return Convert.FromBase64String(base64);
         }
     }
 }

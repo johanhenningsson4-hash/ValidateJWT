@@ -1,7 +1,8 @@
 using System;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TPDotNet.MTR.Common;
+using Johan.Common;
+using static Johan.Common.ValidateJWT;
 
 namespace ValidateJWT.Tests
 {
@@ -16,7 +17,7 @@ namespace ValidateJWT.Tests
             string expected = "Hello World";
 
             // Act
-            byte[] result = ValidateJWT.Base64UrlDecode(input);
+            byte[] result = Base64UrlDecode(input);
             string decoded = Encoding.UTF8.GetString(result);
 
             // Assert
@@ -30,7 +31,7 @@ namespace ValidateJWT.Tests
             string base64Url = "SGVsbG8tV29ybGQ"; // Contains dash
             
             // Act
-            byte[] result = ValidateJWT.Base64UrlDecode(base64Url);
+            byte[] result = Base64UrlDecode(base64Url);
 
             // Assert
             Assert.IsNotNull(result, "Should decode string with dashes");
@@ -44,7 +45,7 @@ namespace ValidateJWT.Tests
             string base64Url = "SGVsbG9fV29ybGQ"; // Contains underscore
             
             // Act
-            byte[] result = ValidateJWT.Base64UrlDecode(base64Url);
+            byte[] result = Base64UrlDecode(base64Url);
 
             // Assert
             Assert.IsNotNull(result, "Should decode string with underscores");
@@ -59,7 +60,7 @@ namespace ValidateJWT.Tests
             string expected = "Hello";
 
             // Act
-            byte[] result = ValidateJWT.Base64UrlDecode(withoutPadding);
+            byte[] result = Base64UrlDecode(withoutPadding);
             string decoded = Encoding.UTF8.GetString(result);
 
             // Assert
@@ -74,7 +75,7 @@ namespace ValidateJWT.Tests
             string expected = "a";
 
             // Act
-            byte[] result = ValidateJWT.Base64UrlDecode(input);
+            byte[] result = Base64UrlDecode(input);
             string decoded = Encoding.UTF8.GetString(result);
 
             // Assert
@@ -89,7 +90,7 @@ namespace ValidateJWT.Tests
             string expected = "ab";
 
             // Act
-            byte[] result = ValidateJWT.Base64UrlDecode(input);
+            byte[] result = Base64UrlDecode(input);
             string decoded = Encoding.UTF8.GetString(result);
 
             // Assert
@@ -104,7 +105,7 @@ namespace ValidateJWT.Tests
             string expected = "ABC";
 
             // Act
-            byte[] result = ValidateJWT.Base64UrlDecode(input);
+            byte[] result = Base64UrlDecode(input);
             string decoded = Encoding.UTF8.GetString(result);
 
             // Assert
@@ -118,7 +119,7 @@ namespace ValidateJWT.Tests
             string input = string.Empty;
 
             // Act
-            byte[] result = ValidateJWT.Base64UrlDecode(input);
+            byte[] result = Base64UrlDecode(input);
 
             // Assert
             Assert.IsNotNull(result, "Should return non-null array");
@@ -132,7 +133,7 @@ namespace ValidateJWT.Tests
             string input = null;
 
             // Act
-            byte[] result = ValidateJWT.Base64UrlDecode(input);
+            byte[] result = Base64UrlDecode(input);
 
             // Assert
             Assert.IsNotNull(result, "Should return non-null array");
@@ -147,7 +148,7 @@ namespace ValidateJWT.Tests
             string base64Url = Base64UrlEncode(longText);
 
             // Act
-            byte[] result = ValidateJWT.Base64UrlDecode(base64Url);
+            byte[] result = Base64UrlDecode(base64Url);
             string decoded = Encoding.UTF8.GetString(result);
 
             // Assert
@@ -162,7 +163,7 @@ namespace ValidateJWT.Tests
             string base64Url = Base64UrlEncode(textWithSpecial);
 
             // Act
-            byte[] result = ValidateJWT.Base64UrlDecode(base64Url);
+            byte[] result = Base64UrlDecode(base64Url);
             string decoded = Encoding.UTF8.GetString(result);
 
             // Assert
@@ -173,11 +174,11 @@ namespace ValidateJWT.Tests
         public void Base64UrlDecode_UnicodeCharacters_DecodesCorrectly()
         {
             // Arrange
-            string unicodeText = "Hello ?? ??";
+            string unicodeText = "Hello??";
             string base64Url = Base64UrlEncode(unicodeText);
 
             // Act
-            byte[] result = ValidateJWT.Base64UrlDecode(base64Url);
+            byte[] result = Base64UrlDecode(base64Url);
             string decoded = Encoding.UTF8.GetString(result);
 
             // Assert
@@ -192,7 +193,7 @@ namespace ValidateJWT.Tests
             string base64Url = Base64UrlEncode(json);
 
             // Act
-            byte[] result = ValidateJWT.Base64UrlDecode(base64Url);
+            byte[] result = Base64UrlDecode(base64Url);
             string decoded = Encoding.UTF8.GetString(result);
 
             // Assert
@@ -207,7 +208,7 @@ namespace ValidateJWT.Tests
             string invalid = "A"; // Single character, invalid Base64 length
 
             // Act
-            ValidateJWT.Base64UrlDecode(invalid);
+            Base64UrlDecode(invalid);
 
             // Assert - Exception expected
         }
@@ -219,7 +220,7 @@ namespace ValidateJWT.Tests
             string jwtPayload = "eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ";
             
             // Act
-            byte[] result = ValidateJWT.Base64UrlDecode(jwtPayload);
+            byte[] result = Base64UrlDecode(jwtPayload);
             string decoded = Encoding.UTF8.GetString(result);
 
             // Assert
@@ -239,7 +240,7 @@ namespace ValidateJWT.Tests
                 .TrimEnd('=');
 
             // Act
-            byte[] result = ValidateJWT.Base64UrlDecode(base64Url);
+            byte[] result = Base64UrlDecode(base64Url);
 
             // Assert
             CollectionAssert.AreEqual(originalBytes, result, "Should preserve binary data exactly");
@@ -259,7 +260,7 @@ namespace ValidateJWT.Tests
             foreach (var input in testInputs)
             {
                 // Act
-                byte[] result = ValidateJWT.Base64UrlDecode(input);
+                byte[] result = Base64UrlDecode(input);
                 
                 // Assert
                 Assert.IsNotNull(result, $"Should decode input: {input}");
