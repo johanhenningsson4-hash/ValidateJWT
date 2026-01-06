@@ -118,6 +118,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="ANALYSIS_SUMMARY.md" />
     <None Include="packages.config" />
     <None Include="PROJECT_ANALYSIS.md" />
     <None Include="Properties\Settings.settings">
