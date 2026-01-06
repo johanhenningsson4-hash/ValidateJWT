@@ -131,6 +131,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <None Include="README.md" />
+    <None Include="SYNC_STATUS.md" />
     <None Include="ValidateJWT.Tests\packages.config" />
     <None Include="ValidateJWT.Tests\TEST_COVERAGE.md" />
     <None Include="ValidateJWT.Tests\ValidateJWT.Tests.csproj" />
