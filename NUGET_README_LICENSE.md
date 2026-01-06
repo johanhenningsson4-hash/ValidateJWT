@@ -114,7 +114,7 @@ nuget pack ValidateJWT.nuspec
 
 ### **With API Key (Auto-publish):**
 ```powershell
-.\BuildAndPublish-NuGet.ps1
+.\PublishRelease.bat
 ```
 
 ---
@@ -334,7 +334,7 @@ Your NuGet package now properly includes:
 
 Just build and publish your package:
 ```powershell
-.\BuildAndPublish-NuGet.ps1
+.\PublishRelease.bat
 ```
 
 ---

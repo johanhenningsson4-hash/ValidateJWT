@@ -2,16 +2,33 @@
 <package>
   <metadata>
     <id>ValidateJWT</id>
-    <version>1.0.0</version>
-    <title>ValidateJWT - Lightweight JWT Expiration Validator</title>
+    <version>1.1.0</version>
+    <title>ValidateJWT - JWT Validation with Optional Signature Verification</title>
     <authors>Johan Henningsson</authors>
     <owners>Johan Henningsson</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <license type="file">LICENSE.txt</license>
     <readme>README.md</readme>
     <projectUrl>https://github.com/johanhenningsson4-hash/ValidateJWT</projectUrl>
-    <description>A lightweight .NET Framework 4.7.2 library for validating JWT token expiration times without full signature verification. Perfect for quick pre-validation checks before making expensive API calls.</description>
+    <description>A lightweight .NET Framework 4.7.2 library for validating JWT tokens including expiration checks and optional signature verification (HS256, RS256). Perfect for quick pre-validation checks and full JWT validation.</description>
     <releaseNotes>
+v1.1.0 (2026-01-XX)
+- NEW: JWT signature verification support (HS256 and RS256)
+- NEW: VerifySignature() method for HMAC-SHA256 verification
+- NEW: VerifySignatureRS256() method for RSA-SHA256 verification
+- NEW: GetAlgorithm() method to detect JWT algorithm
+- NEW: Base64UrlEncode() method
+- NEW: JwtVerificationResult class for detailed results
+- IMPROVED: Complete signature verification documentation
+- 100% backward compatible with v1.0.x
+
+v1.0.1 (2026-01-XX)
+- Documentation improvements
+- Clean namespace (Johan.Common)
+- Verified no company references
+- NuGet package enhancements (README and LICENSE display)
+- All 58+ tests passing
+
 v1.0.0 (2026-01-XX)
 - Initial release
 - JWT expiration validation with clock skew support
@@ -20,7 +37,7 @@ v1.0.0 (2026-01-XX)
 - 58+ unit tests with ~100% API coverage
     </releaseNotes>
     <copyright>Copyright © 2026 Johan Henningsson</copyright>
-    <tags>jwt token validation expiration authentication security base64url</tags>
+    <tags>jwt token validation expiration authentication security base64url signature verification hmac rsa hs256 rs256</tags>
     <repository type="git" url="https://github.com/johanhenningsson4-hash/ValidateJWT" />
     <dependencies>
       <group targetFramework=".NETFramework4.7.2">

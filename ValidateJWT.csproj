@@ -64,11 +64,13 @@
     <None Include="BuildAndPublish-NuGet.ps1" />
     <None Include="BuildNuGetPackage.bat" />
     <None Include="CommitAndPush.ps1" />
+    <None Include="COMPANY_VERIFICATION.md" />
     <None Include="CreateGitHubRelease.ps1" />
     <None Include="CreateNuGetPackage-DevCmd.ps1" />
     <None Include="CreateNuGetPackage.ps1" />
     <None Include="CREATE_GITHUB_RELEASE.md" />
     <None Include="CREATE_PACKAGE_NOW.md" />
+    <None Include="FINAL_COMPANY_VERIFICATION.md" />
     <None Include="FINAL_STATUS_COMPLETE.md" />
     <None Include="FINAL_SUCCESS.md" />
     <None Include="GITHUB_RELEASE_COMPLETE.md" />
@@ -86,6 +88,14 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="Publish-NuGet.ps1" />
+    <None Include="PublishRelease.bat" />
+    <None Include="PublishRelease_v1.0.1.bat" />
+    <None Include="PublishRelease_v1.1.0.bat" />
+    <None Include="PUBLISH_NOW.md" />
+    <None Include="PUBLISH_NUGET_GUIDE.md" />
+    <None Include="PUBLISH_NUGET_QUICK_REF.md" />
+    <None Include="PUBLISH_QUICK_START.md" />
     <None Include="PUSH_NOW.md" />
     <None Include="QUICK_START_API_KEY.md" />
     <None Include="README.md" />
@@ -95,12 +105,17 @@
     <None Include="README_LICENSE_SUMMARY.md" />
     <None Include="RELEASE_NOTES_v1.0.0.md" />
     <None Include="RELEASE_GUIDE.md" />
+    <None Include="RELEASE_NOTES_v1.0.1.md" />
     <None Include="RELEASE_READY.md" />
+    <None Include="RELEASE_v1.1.0_COMMANDS.md" />
     <None Include="SetupNuGetApiKey.ps1" />
+    <None Include="SIGNATURE_VERIFICATION.md" />
     <None Include="SyncToGitHub.ps1" />
     <None Include="SYNC_STATUS.md" />
     <None Include="ValidateJWT.nuspec" />
     <None Include="VerifyNuGetPackage.ps1" />
+    <None Include="VERSION_1.0.1_READY.md" />
+    <None Include="VERSION_1.1.0_READY.md" />
     <None Include="WARNINGS_FIXED.md" />
     <None Include="BUILD_ISSUES_FIXED.md" />
     <None Include="OUTPUT_PATH_FIX.md" />

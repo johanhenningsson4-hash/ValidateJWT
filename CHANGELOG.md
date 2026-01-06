@@ -5,6 +5,73 @@ All notable changes to the ValidateJWT project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-01-XX
+
+### Added
+- **JWT Signature Verification** - Major new feature
+  - `VerifySignature(jwt, secretKey)` method for HMAC-SHA256 (HS256) verification
+  - `VerifySignatureRS256(jwt, publicKeyXml)` method for RSA-SHA256 (RS256) verification
+  - `JwtVerificationResult` class containing validation results
+  - `GetAlgorithm(jwt)` method to detect JWT algorithm from header
+  - `Base64UrlEncode(bytes)` method for URL-safe Base64 encoding
+- Support for symmetric (HS256) and asymmetric (RS256) signature algorithms
+- Detailed verification results with error messages
+- Optional expiration checking included in verification result
+- Complete documentation (SIGNATURE_VERIFICATION.md)
+
+### Improved
+- Enhanced security with full JWT validation capability
+- Comprehensive API examples for signature verification
+- Performance optimization guidance (two-stage validation)
+- Security best practices documentation
+
+### Compatibility
+- 100% backward compatible with v1.0.x
+- All existing methods unchanged (IsExpired, IsValidNow, GetExpirationUtc, Base64UrlDecode)
+- No breaking changes
+- New signature verification features are opt-in
+
+### Documentation
+- Added SIGNATURE_VERIFICATION.md with complete feature guide
+- Added VERSION_1.1.0_READY.md with release notes
+- Updated API reference with new methods
+- Added security notes and best practices
+- Added migration examples from v1.0.x
+
+## [1.0.1] - 2026-01-XX
+
+### Changed
+- Enhanced NuGet package metadata for better display on NuGet.org
+- Improved documentation organization and clarity
+- Verified clean codebase with no company-specific references
+- Standardized namespace to `Johan.Common` throughout project
+
+### Improved
+- README.md now displays properly on NuGet.org package page
+- LICENSE.txt now displays in NuGet package license tab
+- Better package discoverability with enhanced metadata
+- Comprehensive publishing guides and automation scripts
+
+### Documentation
+- Added `PUBLISH_NOW.md` - Complete publishing checklist
+- Added `PUBLISH_QUICK_START.md` - Quick reference guide
+- Added `PublishRelease.bat` - Automated publishing script
+- Added `COMPANY_VERIFICATION.md` - Code verification documentation
+- Added `FINAL_COMPANY_VERIFICATION.md` - Complete verification results
+- Improved NuGet package documentation
+- Added GitHub release automation documentation
+
+### Fixed
+- Removed all company-specific references from source code
+- Cleaned namespace references in documentation
+- Ensured personal copyright (Johan Henningsson) throughout
+
+### Quality
+- All 58+ tests still passing
+- Code quality maintained at Grade A-
+- Zero external dependencies verified
+- Professional, clean codebase confirmed
+
 ## [1.0.0] - 2026-01-XX
 
 ### Added
@@ -40,7 +107,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Grade: A- (Excellent)
 
 ### Security
-- Clear documentation that library does NOT verify JWT signatures
+- Clear documentation that library does NOT verify JWT signatures (in v1.0.0)
 - Designed for time-based pre-validation only
 - Security notices in README and documentation
 
@@ -53,19 +120,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Planned for v1.1.0
-- Fix TPBaseLogging external dependency
-- Remove unused Log.cs file
-- Add XML documentation comments for IntelliSense
+### Planned for v1.2.0
 - Implement `nbf` (Not Before) claim validation
 - Implement `iat` (Issued At) claim extraction
-- Clean up App.config settings
+- Additional signature algorithms (ES256, PS256)
+- Enhanced claims extraction
 
 ### Future Enhancements
-- NuGet package creation and publishing
 - GitHub Actions CI/CD pipeline
 - Code coverage reporting
-- Optional JWT signature verification
 - .NET Standard 2.0 support
 - Performance benchmarks
 - Additional test scenarios
@@ -74,6 +137,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Release Links
 
+- [1.1.0] - https://github.com/johanhenningsson4-hash/ValidateJWT/releases/tag/v1.1.0
+- [1.0.1] - https://github.com/johanhenningsson4-hash/ValidateJWT/releases/tag/v1.0.1
 - [1.0.0] - https://github.com/johanhenningsson4-hash/ValidateJWT/releases/tag/v1.0.0
 
 ---
