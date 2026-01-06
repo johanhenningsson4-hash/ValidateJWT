@@ -61,15 +61,21 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="BuildAndPublish-NuGet.ps1" />
     <None Include="BuildNuGetPackage.bat" />
     <None Include="CommitAndPush.ps1" />
+    <None Include="CreateGitHubRelease.ps1" />
     <None Include="CreateNuGetPackage-DevCmd.ps1" />
     <None Include="CreateNuGetPackage.ps1" />
+    <None Include="CREATE_GITHUB_RELEASE.md" />
     <None Include="CREATE_PACKAGE_NOW.md" />
     <None Include="FINAL_STATUS_COMPLETE.md" />
     <None Include="FINAL_SUCCESS.md" />
+    <None Include="GITHUB_RELEASE_COMPLETE.md" />
+    <None Include="GITHUB_RELEASE_GUIDE.md" />
     <None Include="MSBUILD_FIX.md" />
     <None Include="NAMESPACE_CHANGE_SUMMARY.md" />
+    <None Include="NUGET_API_KEY_GUIDE.md" />
     <None Include="NUGET_GUIDE.md" />
     <None Include="NUGET_PACKAGE_CREATION.md" />
     <None Include="NUGET_PACKAGE_READY.md" />
@@ -80,6 +86,7 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <None Include="PUSH_NOW.md" />
+    <None Include="QUICK_START_API_KEY.md" />
     <None Include="README.md" />
     <None Include="PROJECT_ANALYSIS.md" />
     <None Include="ANALYSIS_SUMMARY.md" />
@@ -87,6 +94,7 @@
     <None Include="RELEASE_NOTES_v1.0.0.md" />
     <None Include="RELEASE_GUIDE.md" />
     <None Include="RELEASE_READY.md" />
+    <None Include="SetupNuGetApiKey.ps1" />
     <None Include="SyncToGitHub.ps1" />
     <None Include="SYNC_STATUS.md" />
     <None Include="ValidateJWT.nuspec" />
