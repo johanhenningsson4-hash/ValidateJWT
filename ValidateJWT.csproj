@@ -62,9 +62,14 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="CommitAndPush.ps1" />
+    <None Include="CreateNuGetPackage.ps1" />
     <None Include="FINAL_STATUS_COMPLETE.md" />
     <None Include="FINAL_SUCCESS.md" />
+    <None Include="MSBUILD_FIX.md" />
     <None Include="NAMESPACE_CHANGE_SUMMARY.md" />
+    <None Include="NUGET_GUIDE.md" />
+    <None Include="NUGET_PACKAGE_READY.md" />
+    <None Include="NUGET_QUICK_START.md" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -80,6 +85,7 @@
     <None Include="RELEASE_READY.md" />
     <None Include="SyncToGitHub.ps1" />
     <None Include="SYNC_STATUS.md" />
+    <None Include="ValidateJWT.nuspec" />
     <None Include="WARNINGS_FIXED.md" />
     <None Include="BUILD_ISSUES_FIXED.md" />
     <None Include="OUTPUT_PATH_FIX.md" />
@@ -97,6 +103,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include=".gitignore" />
+    <Content Include="LICENSE.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
