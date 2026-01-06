@@ -80,6 +80,7 @@
     <None Include="NUGET_PACKAGE_CREATION.md" />
     <None Include="NUGET_PACKAGE_READY.md" />
     <None Include="NUGET_QUICK_START.md" />
+    <None Include="NUGET_README_LICENSE.md" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -91,6 +92,7 @@
     <None Include="PROJECT_ANALYSIS.md" />
     <None Include="ANALYSIS_SUMMARY.md" />
     <None Include="CHANGELOG.md" />
+    <None Include="README_LICENSE_SUMMARY.md" />
     <None Include="RELEASE_NOTES_v1.0.0.md" />
     <None Include="RELEASE_GUIDE.md" />
     <None Include="RELEASE_READY.md" />
@@ -98,6 +100,7 @@
     <None Include="SyncToGitHub.ps1" />
     <None Include="SYNC_STATUS.md" />
     <None Include="ValidateJWT.nuspec" />
+    <None Include="VerifyNuGetPackage.ps1" />
     <None Include="WARNINGS_FIXED.md" />
     <None Include="BUILD_ISSUES_FIXED.md" />
     <None Include="OUTPUT_PATH_FIX.md" />

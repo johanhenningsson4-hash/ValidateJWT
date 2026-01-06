@@ -7,7 +7,8 @@
     <authors>Johan Henningsson</authors>
     <owners>Johan Henningsson</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <license type="expression">MIT</license>
+    <license type="file">LICENSE.txt</license>
+    <readme>README.md</readme>
     <projectUrl>https://github.com/johanhenningsson4-hash/ValidateJWT</projectUrl>
     <description>A lightweight .NET Framework 4.7.2 library for validating JWT token expiration times without full signature verification. Perfect for quick pre-validation checks before making expensive API calls.</description>
     <releaseNotes>
@@ -18,7 +19,7 @@ v1.0.0 (2026-01-XX)
 - Thread-safe implementation
 - 58+ unit tests with ~100% API coverage
     </releaseNotes>
-    <copyright>Copyright © 2026 Johan Henningsson</copyright>
+    <copyright>Copyright Â© 2026 Johan Henningsson</copyright>
     <tags>jwt token validation expiration authentication security base64url</tags>
     <repository type="git" url="https://github.com/johanhenningsson4-hash/ValidateJWT" />
     <dependencies>
@@ -38,8 +39,10 @@ v1.0.0 (2026-01-XX)
     <!-- Source files for SourceLink -->
     <file src="ValidateJWT.cs" target="src" />
     
-    <!-- Documentation -->
+    <!-- Documentation - README will be displayed on NuGet.org -->
     <file src="README.md" target="" />
+    
+    <!-- License file - required when using license type="file" -->
     <file src="LICENSE.txt" target="" />
   </files>
 </package>
