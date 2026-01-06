@@ -61,6 +61,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="CommitAndPush.ps1" />
+    <None Include="FINAL_STATUS_COMPLETE.md" />
     <None Include="FINAL_SUCCESS.md" />
     <None Include="NAMESPACE_CHANGE_SUMMARY.md" />
     <None Include="packages.config" />
