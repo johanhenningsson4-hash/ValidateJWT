@@ -63,6 +63,9 @@
     <None Include="App.config" />
     <None Include="BuildAndPublish-NuGet.ps1" />
     <None Include="BuildNuGetPackage.bat" />
+    <None Include="Cleanup-Code.ps1" />
+    <None Include="CLEANUP_PLAN.md" />
+    <None Include="CLEANUP_SUMMARY.md" />
     <None Include="CommitAndPush.ps1" />
     <None Include="COMPANY_VERIFICATION.md" />
     <None Include="CreateGitHubRelease.ps1" />

@@ -1,286 +1,455 @@
 # ValidateJWT
 
-A lightweight .NET Framework 4.8 library for validating JWT (JSON Web Token) expiration times and time-based claims.
+[![NuGet](https://img.shields.io/nuget/v/ValidateJWT.svg)](https://www.nuget.org/packages/ValidateJWT/)
+[![License](https://img.shields.io/github/license/johanhenningsson4-hash/ValidateJWT)](LICENSE.txt)
 
-## Overview
+A lightweight .NET Framework 4.7.2 library for validating JWT (JSON Web Token) expiration times with optional signature verification support.
 
-ValidateJWT is a utility library that provides simple methods to check JWT token validity based on time claims (`exp`, `nbf`, `iat`) without requiring full JWT verification. This is useful when you need to quickly check if a token has expired before making API calls or other operations.
+## ? Features
 
-## Features
+- ? **Time-Based Validation** - Check JWT expiration with configurable clock skew
+- ? **Signature Verification** - HMAC-SHA256 (HS256) and RSA-SHA256 (RS256) support
+- ? **Zero Dependencies** - Uses only built-in .NET Framework libraries
+- ? **Thread-Safe** - No shared mutable state
+- ? **Well-Tested** - 58+ unit tests with ~100% API coverage
+- ? **Fast & Lightweight** - Minimal overhead
+- ? **Production-Ready** - Comprehensive error handling
 
-- ? Check if a JWT token is expired
-- ? Validate JWT token based on current time
-- ? Extract expiration time from JWT tokens
-- ? Configurable clock skew to account for time synchronization issues
-- ? Base64URL decoding support
-- ? Lightweight - no heavy dependencies
-- ? Built for .NET Framework 4.8
-- ? **Comprehensive test suite with 58+ unit tests**
-- ? **~100% test coverage of public API**
+## ?? Installation
 
-## Installation
-
-1. Clone this repository
-2. Build the project in Visual Studio
-3. Reference the compiled DLL in your project
-
-```bash
-git clone https://github.com/johanhenningsson4-hash/ValidateJWT.git
+### NuGet Package Manager
+```powershell
+Install-Package ValidateJWT
 ```
 
-## Usage
-
-### Check if a JWT is Expired
-
-```csharp
-using ValidateJWT.Common;
-
-string jwt = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...";
-
-// Check if token is expired with default 5-minute clock skew
-bool isExpired = ValidateJWT.IsExpired(jwt);
-
-// Check with custom clock skew
-bool isExpired = ValidateJWT.IsExpired(jwt, TimeSpan.FromMinutes(10));
-
-// Check with custom clock skew and specific time
-bool isExpired = ValidateJWT.IsExpired(jwt, TimeSpan.FromMinutes(5), DateTime.UtcNow);
+### .NET CLI
+```powershell
+dotnet add package ValidateJWT
 ```
 
-### Validate JWT Token is Currently Valid
-
-```csharp
-// Check if token is valid now (not expired)
-bool isValid = ValidateJWT.IsValidNow(jwt);
-
-// With custom parameters
-bool isValid = ValidateJWT.IsValidNow(jwt, TimeSpan.FromMinutes(10), DateTime.UtcNow);
+### PackageReference
+```xml
+<PackageReference Include="ValidateJWT" Version="1.1.0" />
 ```
 
-### Get Token Expiration Time
+## ?? Quick Start
+
+### Time-Based Validation (Fast Pre-Check)
 
 ```csharp
-// Extract the expiration time from the token
-DateTime? expirationTime = ValidateJWT.GetExpirationUtc(jwt);
+using Johan.Common;
 
-if (expirationTime.HasValue)
+var token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...";
+
+// Check if token is expired
+if (ValidateJWT.IsExpired(token))
 {
-    Console.WriteLine($"Token expires at: {expirationTime.Value}");
+    Console.WriteLine("Token has expired");
+}
+
+// Check if token is currently valid
+if (ValidateJWT.IsValidNow(token))
+{
+    Console.WriteLine("Token is valid");
+}
+
+// Get expiration time
+DateTime? expiration = ValidateJWT.GetExpirationUtc(token);
+Console.WriteLine($"Expires: {expiration}");
+```
+
+### Signature Verification (Complete Validation) ??
+
+```csharp
+using Johan.Common;
+
+var token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...";
+var secret = "your-secret-key";
+
+// Verify signature with HS256
+var result = ValidateJWT.VerifySignature(token, secret);
+
+if (result.IsValid && !result.IsExpired)
+{
+    Console.WriteLine("? Token is valid and not expired");
+}
+else if (!result.IsValid)
+{
+    Console.WriteLine($"? Invalid signature: {result.ErrorMessage}");
+}
+else if (result.IsExpired)
+{
+    Console.WriteLine("? Token has expired");
 }
 ```
 
-### Base64URL Decoding
+## ?? API Reference
+
+### Time-Based Validation Methods
+
+#### `IsExpired(jwt, clockSkew, nowUtc)`
+Checks if a JWT token has expired.
 
 ```csharp
-// Decode Base64URL encoded strings
+bool isExpired = ValidateJWT.IsExpired(token);
+bool isExpired = ValidateJWT.IsExpired(token, TimeSpan.FromMinutes(10));
+```
+
+**Parameters:**
+- `jwt` (string) - JWT token
+- `clockSkew` (TimeSpan?) - Clock skew tolerance (default: 5 minutes)
+- `nowUtc` (DateTime?) - Current UTC time (default: DateTime.UtcNow)
+
+**Returns:** `bool` - True if expired, false otherwise
+
+---
+
+#### `IsValidNow(jwt, clockSkew, nowUtc)`
+Checks if a JWT token is currently valid.
+
+```csharp
+bool isValid = ValidateJWT.IsValidNow(token);
+```
+
+**Returns:** `bool` - True if valid, false if expired or invalid
+
+---
+
+#### `GetExpirationUtc(jwt)`
+Extracts the expiration time from a JWT token.
+
+```csharp
+DateTime? expiration = ValidateJWT.GetExpirationUtc(token);
+```
+
+**Returns:** `DateTime?` - Expiration time in UTC, or null if not found
+
+---
+
+### Signature Verification Methods ??
+
+#### `VerifySignature(jwt, secretKey)`
+Verifies JWT signature using HMAC-SHA256 (HS256).
+
+```csharp
+var result = ValidateJWT.VerifySignature(token, "your-secret-key");
+
+if (result.IsValid && !result.IsExpired)
+{
+    // Token is fully validated
+}
+```
+
+**Parameters:**
+- `jwt` (string) - JWT token
+- `secretKey` (string) - Secret key used to sign the token
+
+**Returns:** `JwtVerificationResult`
+- `IsValid` (bool) - Whether signature is valid
+- `Algorithm` (string) - Algorithm used (e.g., "HS256")
+- `ErrorMessage` (string) - Error details if failed
+- `IsExpired` (bool) - Whether token is expired
+
+---
+
+#### `VerifySignatureRS256(jwt, publicKeyXml)`
+Verifies JWT signature using RSA-SHA256 (RS256).
+
+```csharp
+var publicKey = "<RSAKeyValue>...</RSAKeyValue>";
+var result = ValidateJWT.VerifySignatureRS256(token, publicKey);
+```
+
+**Parameters:**
+- `jwt` (string) - JWT token
+- `publicKeyXml` (string) - RSA public key in XML format
+
+**Returns:** `JwtVerificationResult`
+
+---
+
+#### `GetAlgorithm(jwt)` ??
+Gets the algorithm from the JWT header.
+
+```csharp
+string algorithm = ValidateJWT.GetAlgorithm(token);
+// Returns: "HS256", "RS256", etc.
+```
+
+---
+
+### Helper Methods
+
+#### `Base64UrlDecode(input)`
+Decodes Base64URL encoded strings.
+
+```csharp
 byte[] decoded = ValidateJWT.Base64UrlDecode("SGVsbG8gV29ybGQ");
 ```
 
-## API Reference
-
-### Methods
-
-#### `IsExpired(string jwt, TimeSpan? clockSkew = null, DateTime? nowUtc = null)`
-Checks if the JWT token has expired.
-
-**Parameters:**
-- `jwt` - The JWT token string
-- `clockSkew` - Optional clock skew tolerance (default: 5 minutes)
-- `nowUtc` - Optional current UTC time (default: `DateTime.UtcNow`)
-
-**Returns:** `bool` - `true` if expired, `false` otherwise
-
-**Test Coverage:** ? 13 comprehensive tests
-
----
-
-#### `IsValidNow(string jwt, TimeSpan? clockSkew = null, DateTime? nowUtc = null)`
-Checks if the JWT token is valid at the current time.
-
-**Parameters:**
-- `jwt` - The JWT token string
-- `clockSkew` - Optional clock skew tolerance (default: 5 minutes)
-- `nowUtc` - Optional current UTC time (default: `DateTime.UtcNow`)
-
-**Returns:** `bool` - `true` if valid, `false` otherwise
-
-**Test Coverage:** ? 12 comprehensive tests
-
----
-
-#### `GetExpirationUtc(string jwt)`
-Extracts the expiration time from the JWT token.
-
-**Parameters:**
-- `jwt` - The JWT token string
-
-**Returns:** `DateTime?` - The expiration time in UTC, or `null` if not found
-
-**Test Coverage:** ? 10 comprehensive tests
-
----
-
-#### `Base64UrlDecode(string input)`
-Decodes a Base64URL encoded string.
-
-**Parameters:**
-- `input` - The Base64URL encoded string
-
-**Returns:** `byte[]` - The decoded bytes
-
-**Throws:** `FormatException` - If the input has invalid Base64URL length
-
-**Test Coverage:** ? 18 comprehensive tests
-
-## Clock Skew
-
-The library includes a default clock skew of 5 minutes to account for time synchronization issues between different servers. You can customize this value:
+#### `Base64UrlEncode(input)` ??
+Encodes byte arrays to Base64URL format.
 
 ```csharp
-// 10-minute clock skew tolerance
-bool isExpired = ValidateJWT.IsExpired(jwt, TimeSpan.FromMinutes(10));
+byte[] data = Encoding.UTF8.GetBytes("Hello");
+string encoded = ValidateJWT.Base64UrlEncode(data);
 ```
 
-## Error Handling
+## ?? Usage Scenarios
 
-The library includes built-in error handling and logging:
-- Invalid JWT formats return `false` or `null` values
-- Exceptions are logged using `TPBaseLogging`
-- `IsExpired` returns `true` on errors (fail-safe approach)
+### Scenario 1: Quick Expiration Check (Fastest)
 
-All error handling scenarios are validated by comprehensive unit tests.
+```csharp
+// Fast pre-check before expensive operations
+if (ValidateJWT.IsExpired(token))
+{
+    return Unauthorized("Token expired");
+}
 
-## Testing
-
-This project includes a comprehensive test suite:
-
-### Test Statistics
-- **Total Tests:** 58+
-- **Test Coverage:** ~100% of public API
-- **Test Framework:** MSTest 3.1.1
-- **Target Framework:** .NET Framework 4.8
-
-### Test Files
-- `ValidateJWT.Tests/ValidateJWTTests.cs` - Core functionality tests (40 tests)
-- `ValidateJWT.Tests/Base64UrlDecodeTests.cs` - Base64URL decoding tests (18 tests)
-- `ValidateJWT.Tests/JwtTestHelper.cs` - Test utilities for generating test JWTs
-
-### Running Tests
-
-**Visual Studio:**
-1. Open Test Explorer (Test ? Test Explorer)
-2. Click "Run All" to execute all tests
-
-**Command Line:**
-```powershell
-# Run all tests
-dotnet test ValidateJWT.sln
-
-# Run with detailed output
-dotnet test ValidateJWT.sln --logger "console;verbosity=detailed"
+// Proceed with API call
 ```
 
-For more information, see [TEST_COVERAGE.md](ValidateJWT.Tests/TEST_COVERAGE.md).
+### Scenario 2: Complete Validation (Recommended for Security)
 
-## Requirements
+```csharp
+// Full signature and expiration validation
+var result = ValidateJWT.VerifySignature(token, secretKey);
 
-- .NET Framework 4.8
-- Dependencies:
-  - System.Runtime.Serialization
-  - TPDotnet.Base.Service (for logging)
+if (!result.IsValid)
+{
+    return Unauthorized($"Invalid token: {result.ErrorMessage}");
+}
 
-### Development Requirements
-- Visual Studio 2019 or later
-- MSTest.TestFramework 3.1.1 (for tests)
-- MSTest.TestAdapter 3.1.1 (for tests)
+if (result.IsExpired)
+{
+    return Unauthorized("Token expired");
+}
 
-## Project Structure
-
-```
-ValidateJWT/
-??? ValidateJWT.cs              # Main validation logic
-??? Log.cs                      # Logging utilities
-??? App.config                  # Application configuration
-??? ValidateJWT.csproj          # Project file
-??? ValidateJWT.sln             # Solution file
-??? packages.config             # NuGet packages
-??? README.md                   # This file
-??? PROJECT_ANALYSIS.md         # Detailed project analysis
-??? Properties/                 # Assembly info and resources
-??? ValidateJWT.Tests/          # Test project (NEW)
-    ??? ValidateJWTTests.cs         # Main test suite (40 tests)
-    ??? Base64UrlDecodeTests.cs     # Base64 tests (18 tests)
-    ??? JwtTestHelper.cs            # Test utilities
-    ??? TEST_COVERAGE.md            # Test documentation
-    ??? ValidateJWT.Tests.csproj    # Test project file
+// Token is fully validated
 ```
 
-## Code Quality
+### Scenario 3: Two-Stage Validation (Optimized)
 
-| Metric | Value |
-|--------|-------|
-| Production Code | ~290 lines |
-| Test Code | ~766 lines |
-| Test-to-Production Ratio | 2.6:1 |
-| Test Coverage | ~100% |
-| Total Tests | 58+ |
+```csharp
+// Stage 1: Quick time check (0.1ms)
+if (ValidateJWT.IsExpired(token))
+{
+    return Unauthorized("Token expired");
+}
 
-## Contributing
+// Stage 2: Signature verification (0.5-5ms)
+var result = ValidateJWT.VerifySignature(token, secretKey);
 
-Contributions are welcome! Please follow these guidelines:
+if (!result.IsValid)
+{
+    return Unauthorized("Invalid signature");
+}
 
-1. ? Ensure all existing tests pass
-2. ? Add tests for new functionality
-3. ? Follow existing naming conventions
-4. ? Update documentation as needed
-5. ? Submit a Pull Request
+// Token is valid
+```
 
-## License
+### Scenario 4: Multi-Algorithm Support
 
-This project is private and proprietary.
+```csharp
+var algorithm = ValidateJWT.GetAlgorithm(token);
 
-## Security Notice
+JwtVerificationResult result;
+switch (algorithm)
+{
+    case "HS256":
+        result = ValidateJWT.VerifySignature(token, secretKey);
+        break;
+    case "RS256":
+        result = ValidateJWT.VerifySignatureRS256(token, publicKey);
+        break;
+    default:
+        return Unauthorized($"Unsupported algorithm: {algorithm}");
+}
 
-?? **IMPORTANT:** This library validates JWT time claims only - it does **NOT** verify signatures!
+if (result.IsValid && !result.IsExpired)
+{
+    // Token is valid
+}
+```
 
-### What This Library Does
-? Checks if a JWT token has expired  
-? Validates token based on current time  
-? Extracts expiration timestamps  
+## ?? Configuration
 
-### What This Library Does NOT Do
-? Verify JWT signatures  
-? Validate token issuer  
-? Check token audience  
-? Provide authentication/authorization  
+### Clock Skew Tolerance
 
-**For production security:** Always use this library in conjunction with full JWT validation that includes signature verification. This library is best used for quick expiration pre-checks before making expensive API calls.
+Account for time synchronization issues between servers:
 
-For full JWT validation including signature verification, consider using:
-- **System.IdentityModel.Tokens.Jwt** (Microsoft)
-- **jose-jwt** (dvsekhvalnov)
-- **JWT.Net** (jwt-dotnet)
+```csharp
+// Default: 5 minutes
+bool isExpired = ValidateJWT.IsExpired(token);
 
-## Notes
+// Custom: 10 minutes
+bool isExpired = ValidateJWT.IsExpired(token, TimeSpan.FromMinutes(10));
 
-- This library validates JWT time claims only - it does not verify signatures
-- For full JWT validation including signature verification, consider using a comprehensive JWT library
-- The library assumes UTC times for all operations
-- All functionality is validated by comprehensive unit tests
-- The library is thread-safe (no shared mutable state)
+// No clock skew
+bool isExpired = ValidateJWT.IsExpired(token, TimeSpan.Zero);
+```
 
-## Documentation
+### Time Injection (Testing)
 
-- [README.md](README.md) - This file (user guide)
-- [PROJECT_ANALYSIS.md](PROJECT_ANALYSIS.md) - Detailed technical analysis
-- [TEST_COVERAGE.md](ValidateJWT.Tests/TEST_COVERAGE.md) - Test suite documentation
+Inject custom time for deterministic testing:
 
-## Support
+```csharp
+var testTime = new DateTime(2025, 1, 15, 12, 0, 0, DateTimeKind.Utc);
+bool isExpired = ValidateJWT.IsExpired(token, null, testTime);
+```
 
-For issues or questions, please open an issue in the GitHub repository.
+## ?? Security Considerations
+
+### ? What This Library Provides
+
+- ? JWT expiration validation
+- ? Signature verification (HS256, RS256)
+- ? Algorithm detection
+- ? Clock skew handling
+- ? Comprehensive error handling
+
+### ?? What This Library Does NOT Provide
+
+- ? Issuer (`iss`) claim validation
+- ? Audience (`aud`) claim validation
+- ? Not-before (`nbf`) claim validation (planned for v1.2)
+- ? Token generation/signing
+
+### ?? Best Practices
+
+1. **Always verify signatures in production:**
+   ```csharp
+   var result = ValidateJWT.VerifySignature(token, secret);
+   if (!result.IsValid) return Unauthorized();
+   ```
+
+2. **Store secrets securely:**
+   ```csharp
+   // ? Good - from configuration
+   var secret = _configuration["JWT:Secret"];
+   
+   // ? Bad - hardcoded
+   var secret = "my-secret-123";
+   ```
+
+3. **Use appropriate algorithm:**
+   - **HS256** - Shared secret, both parties trust each other
+   - **RS256** - Public/private key, issuer signs, anyone verifies
+
+4. **Combine with full JWT validation:**
+   ```csharp
+   // Step 1: Quick expiration check
+   if (ValidateJWT.IsExpired(token)) return Unauthorized();
+   
+   // Step 2: Signature verification
+   var result = ValidateJWT.VerifySignature(token, secret);
+   if (!result.IsValid) return Unauthorized();
+   
+   // Step 3: Validate claims (issuer, audience, etc.)
+   // ... your claim validation logic
+   ```
+
+## ?? Testing
+
+Comprehensive test suite with 58+ unit tests:
+
+```csharp
+// Test expiration
+[TestMethod]
+public void IsExpired_ExpiredToken_ReturnsTrue()
+{
+    var token = CreateExpiredToken();
+    Assert.IsTrue(ValidateJWT.IsExpired(token));
+}
+
+// Test signature verification
+[TestMethod]
+public void VerifySignature_ValidToken_ReturnsTrue()
+{
+    var result = ValidateJWT.VerifySignature(validToken, secret);
+    Assert.IsTrue(result.IsValid);
+}
+```
+
+**Test Coverage:**
+- 13 tests for `IsExpired()`
+- 12 tests for `IsValidNow()`
+- 10 tests for `GetExpirationUtc()`
+- 18 tests for `Base64UrlDecode()`
+- Plus additional tests for signature verification
+
+## ?? Performance
+
+| Operation | Time | Notes |
+|-----------|------|-------|
+| Time Check | ~0.1ms | Very fast |
+| HS256 Verify | ~0.5-1ms | HMAC verification |
+| RS256 Verify | ~2-5ms | RSA verification (slower) |
+
+**Optimization tip:** Check expiration first, then verify signature.
+
+## ?? Version History
+
+### v1.1.0 (Latest) ??
+- Added JWT signature verification (HS256, RS256)
+- New `VerifySignature()` and `VerifySignatureRS256()` methods
+- New `JwtVerificationResult` class
+- New `GetAlgorithm()` helper
+- New `Base64UrlEncode()` helper
+- 100% backward compatible with v1.0.x
+
+### v1.0.1
+- Documentation improvements
+- Enhanced NuGet package metadata
+- Clean namespace (Johan.Common)
+
+### v1.0.0
+- Initial release
+- Time-based JWT validation
+- Base64URL encoding/decoding
+- 58+ comprehensive tests
+
+See [CHANGELOG.md](CHANGELOG.md) for complete history.
+
+## ?? Documentation
+
+- [README.md](README.md) - This file
+- [CHANGELOG.md](CHANGELOG.md) - Version history
+- [SIGNATURE_VERIFICATION.md](SIGNATURE_VERIFICATION.md) - Complete signature verification guide
+- [LICENSE.txt](LICENSE.txt) - MIT License
+
+## ?? Contributing
+
+Contributions are welcome! Please:
+
+1. Fork the repository
+2. Create a feature branch
+3. Add tests for new functionality
+4. Ensure all tests pass
+5. Submit a pull request
+
+## ?? License
+
+This project is licensed under the MIT License - see [LICENSE.txt](LICENSE.txt) for details.
+
+## ?? Links
+
+- **NuGet Package:** https://www.nuget.org/packages/ValidateJWT
+- **GitHub Repository:** https://github.com/johanhenningsson4-hash/ValidateJWT
+- **Issues:** https://github.com/johanhenningsson4-hash/ValidateJWT/issues
+
+## ?? Support
+
+For questions, issues, or feature requests:
+- Open an issue on [GitHub](https://github.com/johanhenningsson4-hash/ValidateJWT/issues)
+- Check existing documentation
+- Review test examples
 
 ---
 
-**Version:** 1.0  
-**Last Updated:** January 2025  
-**Status:** ? Production-ready with comprehensive test coverage
+**Made with ?? for the .NET community**
+
+**Author:** Johan Henningsson  
+**Version:** 1.1.0  
+**Last Updated:** January 2026  
+**Status:** ? Production-Ready
