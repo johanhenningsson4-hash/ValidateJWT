@@ -68,6 +68,7 @@
     <None Include="CLEANUP_SUMMARY.md" />
     <None Include="CommitAndPublish.bat" />
     <None Include="CommitAndPublish.ps1" />
+    <None Include="COMMITANDPUBLISH_FIX.md" />
     <None Include="COMMITANDPUBLISH_PS1_GUIDE.md" />
     <None Include="CommitAndPush.ps1" />
     <None Include="COMMIT_AND_PUBLISH_GUIDE.md" />
