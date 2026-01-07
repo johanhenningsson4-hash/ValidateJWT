@@ -127,7 +127,7 @@ Version Updates:
 Publishing Tools:
 -----------------
 - Publish-NuGet.ps1: Comprehensive PowerShell publishing script
-- CommitAndPublish.ps1: Automated PowerShell commit & publish
+- CommitAndPublish.ps1: Automated PowerShell commit and publish
 - CommitAndPublish.bat: Batch file alternative
 - PublishRelease_v$($Version.Replace('.', '_')).bat: Version-specific release
 - Cleanup-Code.ps1: Repository cleanup automation
@@ -200,11 +200,20 @@ See README.md for installation and quick start.
 See CHANGELOG.md for detailed change history.
 "@
 
-git commit -m $commitMessage
-
-if ($LASTEXITCODE -ne 0) {
-    Write-Error "ERROR: Commit failed!"
-    exit 1
+# Write commit message to temporary file to avoid command injection
+$tempCommitFile = [System.IO.Path]::GetTempFileName()
+try {
+    [System.IO.File]::WriteAllText($tempCommitFile, $commitMessage, [System.Text.Encoding]::UTF8)
+    git commit -F $tempCommitFile
+    
+    if ($LASTEXITCODE -ne 0) {
+        Write-Error "ERROR: Commit failed!"
+        exit 1
+    }
+} finally {
+    if (Test-Path $tempCommitFile) {
+        Remove-Item $tempCommitFile -Force
+    }
 }
 
 Write-Success "  ? Changes committed"
@@ -268,12 +277,12 @@ Key Features:
 - Support for HS256 (symmetric) and RS256 (asymmetric)
 - Detailed verification results with error messages
 - Optional expiration checking in verification result
-- 100% backward compatible with v1.0.x
+- 100 percent backward compatible with v1.0.x
 - Zero external dependencies
 - Thread-safe implementation
 
 API Methods (7 Total):
-======================
+====================
 Time Validation:
 - IsExpired(jwt, clockSkew, nowUtc)
 - IsValidNow(jwt, clockSkew, nowUtc)
@@ -295,9 +304,9 @@ Compatibility:
 
 Performance:
 ============
-- Time check: ~0.1ms
-- HS256 verify: ~0.5-1ms
-- RS256 verify: ~2-5ms
+- Time check: approximately 0.1ms
+- HS256 verify: approximately 0.5-1ms
+- RS256 verify: approximately 2-5ms
 - Optimized two-stage validation supported
 
 Documentation:
@@ -311,11 +320,20 @@ Documentation:
 See SIGNATURE_VERIFICATION.md for complete details.
 "@
 
-    git tag -a "v$Version" -m $tagMessage
-
-    if ($LASTEXITCODE -ne 0) {
-        Write-Error "ERROR: Failed to create tag!"
-        exit 1
+    # Write tag message to temporary file to avoid command injection
+    $tempTagFile = [System.IO.Path]::GetTempFileName()
+    try {
+        [System.IO.File]::WriteAllText($tempTagFile, $tagMessage, [System.Text.Encoding]::UTF8)
+        git tag -a "v$Version" -F $tempTagFile
+        
+        if ($LASTEXITCODE -ne 0) {
+            Write-Error "ERROR: Failed to create tag!"
+            exit 1
+        }
+    } finally {
+        if (Test-Path $tempTagFile) {
+            Remove-Item $tempTagFile -Force
+        }
     }
 
     git push origin "v$Version"
