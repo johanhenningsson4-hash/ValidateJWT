@@ -66,7 +66,11 @@
     <None Include="Cleanup-Code.ps1" />
     <None Include="CLEANUP_PLAN.md" />
     <None Include="CLEANUP_SUMMARY.md" />
+    <None Include="CommitAndPublish.bat" />
+    <None Include="CommitAndPublish.ps1" />
+    <None Include="COMMITANDPUBLISH_PS1_GUIDE.md" />
     <None Include="CommitAndPush.ps1" />
+    <None Include="COMMIT_AND_PUBLISH_GUIDE.md" />
     <None Include="COMPANY_VERIFICATION.md" />
     <None Include="CreateGitHubRelease.ps1" />
     <None Include="CreateNuGetPackage-DevCmd.ps1" />
@@ -106,6 +110,7 @@
     <None Include="ANALYSIS_SUMMARY.md" />
     <None Include="CHANGELOG.md" />
     <None Include="README_LICENSE_SUMMARY.md" />
+    <None Include="README_UPDATE_SUMMARY.md" />
     <None Include="RELEASE_NOTES_v1.0.0.md" />
     <None Include="RELEASE_GUIDE.md" />
     <None Include="RELEASE_NOTES_v1.0.1.md" />
