@@ -230,6 +230,8 @@ Write-Info "[4/7] Creating Git tag v$Version..."
 # Check if tag exists
 $tagExists = git tag -l "v$Version"
 
+$skipTag = $false
+
 if ($tagExists) {
     Write-Warning "  Tag v$Version already exists!"
     $recreate = Read-Host "  Delete and recreate? (Y/N)"
@@ -240,11 +242,12 @@ if ($tagExists) {
         Write-Success "  ? Existing tag deleted"
     } else {
         Write-Warning "  Using existing tag"
-        goto skip_tag
+        $skipTag = $true
     }
 }
 
-$tagMessage = @"
+if (-not $skipTag) {
+    $tagMessage = @"
 ValidateJWT v$Version - JWT Signature Verification
 
 Major Feature Release - Signature Verification Support
@@ -308,24 +311,24 @@ Documentation:
 See SIGNATURE_VERIFICATION.md for complete details.
 "@
 
-git tag -a "v$Version" -m $tagMessage
+    git tag -a "v$Version" -m $tagMessage
 
-if ($LASTEXITCODE -ne 0) {
-    Write-Error "ERROR: Failed to create tag!"
-    exit 1
+    if ($LASTEXITCODE -ne 0) {
+        Write-Error "ERROR: Failed to create tag!"
+        exit 1
+    }
+
+    git push origin "v$Version"
+
+    if ($LASTEXITCODE -ne 0) {
+        Write-Error "ERROR: Failed to push tag!"
+        exit 1
+    }
+
+    Write-Success "  ? Tag v$Version created and pushed"
 }
 
-git push origin "v$Version"
-
-if ($LASTEXITCODE -ne 0) {
-    Write-Error "ERROR: Failed to push tag!"
-    exit 1
-}
-
-Write-Success "  ? Tag v$Version created and pushed"
 Write-Host ""
-
-:skip_tag
 
 # Step 5: Create GitHub Release
 if (-not $SkipGitHubRelease) {
