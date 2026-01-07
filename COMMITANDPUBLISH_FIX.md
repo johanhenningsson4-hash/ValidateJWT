@@ -12,6 +12,11 @@ Line 252 contained a batch command `goto skip_tag` which doesn't exist in PowerS
 **Root Cause:**
 Git commit and tag messages containing special characters (%, :, etc.) were being interpreted as batch commands when passed through cmd.exe on Windows.
 
+### Problem 3: `The command nuget was not found, but does exist in the current location`
+
+**Root Cause:**
+PowerShell doesn't load commands from the current directory by default. Need to use `.\nuget.exe` instead of just `nuget`.
+
 ---
 
 ## ? Solutions Applied
@@ -92,9 +97,44 @@ try {
 
 ---
 
+### Fix 3: Use .\ prefix for local executables
+
+**Problem:**
+```powershell
+# ? WRONG - PowerShell security policy
+if (Test-Path "nuget.exe") {
+    $nuget = "nuget"  # Fails! PowerShell requires .\
+}
+
+& $nuget pack  # Error: "nuget was not found"
+```
+
+**Solution:**
+```powershell
+# ? CORRECT - Always use .\ for local files
+if (Get-Command nuget -ErrorAction SilentlyContinue) {
+    $nuget = "nuget"  # OK - in PATH
+} elseif (Test-Path ".\nuget.exe") {
+    $nuget = ".\nuget.exe"  # OK - explicit path
+} else {
+    Invoke-WebRequest -Uri "..." -OutFile "nuget.exe"
+    $nuget = ".\nuget.exe"  # OK - explicit path
+}
+
+& $nuget pack  # Works!
+```
+
+**Why this is required:**
+- PowerShell security feature to prevent accidental execution
+- Current directory (`.`) is not in PowerShell's execution path
+- Must use `.\` prefix for executables in current directory
+- Or use full path: `C:\path\to\nuget.exe`
+
+---
+
 ## ?? Changes Made
 
-### Change 1: Commit Message (Lines 95-210)
+### Change 1: Commit Message (Lines 95-233)
 
 **Before:**
 ```powershell
@@ -114,7 +154,7 @@ try {
 }
 ```
 
-### Change 2: Tag Message (Lines 247-320)
+### Change 2: Tag Message (Lines 259-344)
 
 **Before:**
 ```powershell
@@ -134,7 +174,28 @@ try {
 }
 ```
 
-### Change 3: Special Characters Escaped
+### Change 3: NuGet Executable Path (Lines 426-437)
+
+**Before:**
+```powershell
+if (Test-Path "nuget.exe") {
+    $nuget = "nuget"  # ? Wrong
+}
+```
+
+**After:**
+```powershell
+if (Get-Command nuget -ErrorAction SilentlyContinue) {
+    $nuget = "nuget"  # ? OK - in PATH
+} elseif (Test-Path ".\nuget.exe") {
+    $nuget = ".\nuget.exe"  # ? OK - explicit local path
+} else {
+    Invoke-WebRequest -Uri "..." -OutFile "nuget.exe"
+    $nuget = ".\nuget.exe"  # ? OK - explicit local path
+}
+```
+
+### Change 4: Special Characters Escaped
 
 Changed problematic characters in messages:
 - `~` (tilde) ? `approximately`
@@ -152,7 +213,8 @@ The script will now:
 4. ? Create commit message safely (via temp file)
 5. ? Create tag message safely (via temp file)
 6. ? Handle special characters correctly
-7. ? Continue with remaining steps
+7. ? Use correct path for nuget.exe
+8. ? Continue with remaining steps
 
 ---
 
@@ -174,13 +236,18 @@ The script will now:
 | **Flow control** | goto/labels | if/flag variable |
 | **Commit message** | -m parameter | -F file parameter |
 | **Tag message** | -m parameter | -F file parameter |
+| **NuGet path** | `nuget` | `.\nuget.exe` |
 | **Special chars** | Raw in message | Escaped or in file |
 | **Safety** | ?? Command injection | ? Safe file read |
 
 ---
 
-## ?? Why This Happens
+## ?? Why These Issues Happen
 
+### Issue 1: goto Command
+PowerShell is not batch. It uses different flow control.
+
+### Issue 2: Special Characters in Git Messages
 On Windows, Git uses cmd.exe to process command-line arguments:
 
 1. **Direct `-m` parameter:**
@@ -199,6 +266,20 @@ On Windows, Git uses cmd.exe to process command-line arguments:
    - No cmd.exe interpretation
    - Special characters are safe
 
+### Issue 3: Current Directory Security
+PowerShell security policy:
+
+1. **Current directory not in path:**
+   ```powershell
+   .\program.exe   # ? Works - explicit path
+   program.exe     # ? Fails - ambiguous
+   ```
+
+2. **Why this exists:**
+   - Prevents accidental execution of malicious files
+   - User must be explicit about local executables
+   - Similar to Linux requiring `./program`
+
 ---
 
 ## ?? Additional Benefits
@@ -207,16 +288,19 @@ On Windows, Git uses cmd.exe to process command-line arguments:
 - ? Prevents command injection
 - ? No shell interpretation of message content
 - ? Safe handling of user input
+- ? Explicit executable paths
 
 ### Reliability
 - ? Handles all special characters
 - ? Supports international characters (UTF-8)
 - ? Works consistently across platforms
+- ? Clear executable resolution
 
 ### Maintainability
 - ? Cleaner error handling (try/finally)
 - ? Proper cleanup of temp files
 - ? More robust code
+- ? Better PowerShell practices
 
 ---
 
@@ -261,6 +345,22 @@ try {
 }
 ```
 
+**PowerShell executable paths:**
+```powershell
+# Check if in PATH
+if (Get-Command program -ErrorAction SilentlyContinue) {
+    $exe = "program"  # OK - in PATH
+}
+
+# Check if in current directory
+if (Test-Path ".\program.exe") {
+    $exe = ".\program.exe"  # OK - explicit path
+}
+
+# Use it
+& $exe --version
+```
+
 ---
 
 **Status:** ? Fixed and ready to use!
@@ -269,6 +369,6 @@ try {
 1. ? Batch command `goto` removed
 2. ? Command injection via commit message prevented
 3. ? Command injection via tag message prevented
-4. ? Special characters handled safely
+4. ? PowerShell executable path security handled
 
 *Issues resolved: January 2026*
