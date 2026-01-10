@@ -1,7 +1,9 @@
 # ValidateJWT
 
 [![NuGet](https://img.shields.io/nuget/v/ValidateJWT.svg)](https://www.nuget.org/packages/ValidateJWT/)
+[![Build Status](https://github.com/johanhenningsson4-hash/ValidateJWT/workflows/CI%2FCD%20Pipeline/badge.svg)](https://github.com/johanhenningsson4-hash/ValidateJWT/actions)
 [![License](https://img.shields.io/github/license/johanhenningsson4-hash/ValidateJWT)](LICENSE.txt)
+[![.NET Framework](https://img.shields.io/badge/.NET%20Framework-4.7.2-blue)](https://dotnet.microsoft.com/)
 
 A lightweight .NET Framework 4.7.2 library for validating JWT (JSON Web Token) expiration times with optional signature verification support.
 
@@ -12,8 +14,25 @@ A lightweight .NET Framework 4.7.2 library for validating JWT (JSON Web Token) e
 - ? **Zero Dependencies** - Uses only built-in .NET Framework libraries
 - ? **Thread-Safe** - No shared mutable state
 - ? **Well-Tested** - 58+ unit tests with ~100% API coverage
+- ? **Cross-Platform** - Works on x86, x64, and AnyCPU
 - ? **Fast & Lightweight** - Minimal overhead
+- ? **CI/CD Ready** - Automated testing and deployment
 - ? **Production-Ready** - Comprehensive error handling
+
+## ?? Platform Compatibility
+
+ValidateJWT is built as **AnyCPU** and works on both x86 and x64 platforms:
+
+- ? Windows x86 (32-bit)
+- ? Windows x64 (64-bit)
+- ? .NET Framework 4.7.2 or higher
+- ? No native dependencies
+- ? Pure managed code
+
+### System Requirements
+- **OS:** Windows 7 SP1 or higher
+- **.NET:** Framework 4.7.2 or higher
+- **Architecture:** Any (x86, x64, AnyCPU)
 
 ## ?? Installation
 
@@ -39,7 +58,7 @@ dotnet add package ValidateJWT
 ```csharp
 using Johan.Common;
 
-var token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...";
+var token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."";
 
 // Check if token is expired
 if (ValidateJWT.IsExpired(token))
@@ -413,37 +432,122 @@ See [CHANGELOG.md](CHANGELOG.md) for complete history.
 
 ## ?? Documentation
 
-- [README.md](README.md) - This file
+### User Documentation
+- [README.md](README.md) - This file (getting started)
 - [CHANGELOG.md](CHANGELOG.md) - Version history
-- [SIGNATURE_VERIFICATION.md](SIGNATURE_VERIFICATION.md) - Complete signature verification guide
+- [SIGNATURE_VERIFICATION.md](SIGNATURE_VERIFICATION.md) - Signature verification guide
 - [LICENSE.txt](LICENSE.txt) - MIT License
+
+### Developer Documentation
+- [CI_CD_GUIDE.md](CI_CD_GUIDE.md) - CI/CD pipeline and automation
+- [BOUNCYCASTLE_INTEGRATION.md](BOUNCYCASTLE_INTEGRATION.md) - BouncyCastle integration
+- [RUN_TESTS_GUIDE.md](RUN_TESTS_GUIDE.md) - Test execution guide
+- [PLATFORM_COMPATIBILITY.md](PLATFORM_COMPATIBILITY.md) - Platform compatibility details
+- [GITHUB_SECRETS_SETUP.md](GITHUB_SECRETS_SETUP.md) - GitHub secrets configuration
+
+### Maintenance Documentation
+- [COMPANY_REFERENCES_CLEANUP.md](COMPANY_REFERENCES_CLEANUP.md) - Cleanup guide
+- [UNUSED_REFERENCES_ANALYSIS.md](UNUSED_REFERENCES_ANALYSIS.md) - Dependency analysis
+
+## ?? CI/CD & Automation
+
+### GitHub Actions Workflows
+
+ValidateJWT includes a complete CI/CD pipeline:
+
+- **?? Continuous Integration** - Automated build and test on every push
+- **? Pull Request Validation** - Automatic testing on PRs
+- **? Nightly Builds** - Scheduled regression testing
+- **? Code Coverage** - Automated coverage reporting
+- **? Security Scanning** - Vulnerability detection
+- **? Automated Publishing** - Zero-touch NuGet deployment
+
+### Automation Scripts
+
+**Testing:**
+```powershell
+# Run all tests with coverage
+.\Run-AutomatedTests.ps1 -GenerateCoverage
+
+# Fix and run tests
+.\Fix-And-RunTests.ps1
+```
+
+**Publishing:**
+```powershell
+# Build NuGet package
+.\BuildNuGetPackage.bat
+
+# Publish to NuGet.org
+.\Publish-NuGet.ps1 -Version "1.1.0"
+```
+
+**Maintenance:**
+```powershell
+# Remove unused references
+.\Remove-UnusedReferences.ps1
+
+# Clean company references
+.\Remove-CompanyReferences.ps1
+
+# Setup CI/CD
+.\Setup-CICD.ps1
+```
+
+**See [CI_CD_GUIDE.md](CI_CD_GUIDE.md) for complete automation documentation.**
 
 ## ?? Contributing
 
 Contributions are welcome! Please:
 
 1. Fork the repository
-2. Create a feature branch
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
 3. Add tests for new functionality
-4. Ensure all tests pass
-5. Submit a pull request
+4. Ensure all tests pass (`.\Run-AutomatedTests.ps1`)
+5. Commit your changes (`git commit -m 'Add amazing feature'`)
+6. Push to the branch (`git push origin feature/amazing-feature`)
+7. Open a Pull Request
 
-## ?? License
+### Development Setup
 
-This project is licensed under the MIT License - see [LICENSE.txt](LICENSE.txt) for details.
+```powershell
+# Clone repository
+git clone https://github.com/johanhenningsson4-hash/ValidateJWT.git
+cd ValidateJWT
+
+# Restore packages
+nuget restore ValidateJWT.sln
+
+# Build
+msbuild ValidateJWT.sln /p:Configuration=Release
+
+# Run tests
+.\Run-AutomatedTests.ps1
+```
+
+### Code Quality Standards
+
+- ? Maintain ~100% test coverage
+- ? Follow existing code style
+- ? Add XML documentation for public APIs
+- ? Include usage examples in tests
+- ? Update CHANGELOG.md for changes
 
 ## ?? Links
 
 - **NuGet Package:** https://www.nuget.org/packages/ValidateJWT
 - **GitHub Repository:** https://github.com/johanhenningsson4-hash/ValidateJWT
 - **Issues:** https://github.com/johanhenningsson4-hash/ValidateJWT/issues
+- **GitHub Actions:** https://github.com/johanhenningsson4-hash/ValidateJWT/actions
+- **Releases:** https://github.com/johanhenningsson4-hash/ValidateJWT/releases
 
 ## ?? Support
 
 For questions, issues, or feature requests:
 - Open an issue on [GitHub](https://github.com/johanhenningsson4-hash/ValidateJWT/issues)
-- Check existing documentation
-- Review test examples
+- Check [CI_CD_GUIDE.md](CI_CD_GUIDE.md) for automation help
+- Review test examples in ValidateJWT.Tests
+- See documentation files for specific topics
 
 ---
 
@@ -451,5 +555,6 @@ For questions, issues, or feature requests:
 
 **Author:** Johan Henningsson  
 **Version:** 1.1.0  
+**Framework:** .NET Framework 4.7.2  
 **Last Updated:** January 2026  
-**Status:** ? Production-Ready
+**Status:** ? Production-Ready | ? CI/CD Enabled | ? Fully Automated

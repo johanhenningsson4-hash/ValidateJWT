@@ -69,6 +69,7 @@
     <None Include="BOUNCYCASTLE_INTEGRATION.md" />
     <None Include="BuildAndPublish-NuGet.ps1" />
     <None Include="BuildNuGetPackage.bat" />
+    <None Include="Check-GitHubSecrets.ps1" />
     <None Include="CI_CD_GUIDE.md" />
     <None Include="Cleanup-Code.ps1" />
     <None Include="CLEANUP_PLAN.md" />
@@ -93,6 +94,7 @@
     <None Include="Fix-And-RunTests.ps1" />
     <None Include="GITHUB_RELEASE_COMPLETE.md" />
     <None Include="GITHUB_RELEASE_GUIDE.md" />
+    <None Include="GITHUB_SECRETS_SETUP.md" />
     <None Include="MSBUILD_FIX.md" />
     <None Include="NAMESPACE_CHANGE_SUMMARY.md" />
     <None Include="NUGET_API_KEY_GUIDE.md" />
