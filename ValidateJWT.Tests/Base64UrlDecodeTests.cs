@@ -201,16 +201,24 @@ namespace ValidateJWT.Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(FormatException))]
         public void Base64UrlDecode_InvalidLength_ThrowsFormatException()
         {
             // Arrange - Length % 4 == 1 is invalid
             string invalid = "A"; // Single character, invalid Base64 length
+            bool exceptionThrown = false;
 
             // Act
-            Base64UrlDecode(invalid);
+            try
+            {
+                Base64UrlDecode(invalid);
+            }
+            catch (FormatException)
+            {
+                exceptionThrown = true;
+            }
 
-            // Assert - Exception expected
+            // Assert
+            Assert.IsTrue(exceptionThrown, "Should throw FormatException for invalid Base64 length");
         }
 
         [TestMethod]

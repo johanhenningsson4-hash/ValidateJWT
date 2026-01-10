@@ -70,11 +70,13 @@
     <None Include="BuildAndPublish-NuGet.ps1" />
     <None Include="BuildNuGetPackage.bat" />
     <None Include="Check-GitHubSecrets.ps1" />
+    <None Include="CICD_STATUS.md" />
     <None Include="CI_CD_GUIDE.md" />
     <None Include="Cleanup-Code.ps1" />
     <None Include="CLEANUP_PLAN.md" />
     <None Include="CLEANUP_SUMMARY.md" />
     <None Include="Commit-And-Push.ps1" />
+    <None Include="Commit-Changes.bat" />
     <None Include="CommitAndPublish.bat" />
     <None Include="CommitAndPublish.ps1" />
     <None Include="COMMITANDPUBLISH_FIX.md" />
@@ -141,6 +143,7 @@
     <None Include="SYNC_STATUS.md" />
     <None Include="UNUSED_REFERENCES_ANALYSIS.md" />
     <None Include="ValidateJWT.nuspec" />
+    <None Include="Verify-CICD-Setup.ps1" />
     <None Include="VerifyNuGetPackage.ps1" />
     <None Include="VERSION_1.0.1_READY.md" />
     <None Include="VERSION_1.1.0_READY.md" />
