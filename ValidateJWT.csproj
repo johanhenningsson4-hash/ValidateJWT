@@ -60,20 +60,27 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include=".github\workflows\ci-cd.yml" />
+    <None Include=".github\workflows\code-coverage.yml" />
+    <None Include=".github\workflows\nightly-build.yml" />
+    <None Include=".github\workflows\pr-validation.yml" />
     <None Include="Add-BouncyCastle.ps1" />
     <None Include="App.config" />
     <None Include="BOUNCYCASTLE_INTEGRATION.md" />
     <None Include="BuildAndPublish-NuGet.ps1" />
     <None Include="BuildNuGetPackage.bat" />
+    <None Include="CI_CD_GUIDE.md" />
     <None Include="Cleanup-Code.ps1" />
     <None Include="CLEANUP_PLAN.md" />
     <None Include="CLEANUP_SUMMARY.md" />
+    <None Include="Commit-And-Push.ps1" />
     <None Include="CommitAndPublish.bat" />
     <None Include="CommitAndPublish.ps1" />
     <None Include="COMMITANDPUBLISH_FIX.md" />
     <None Include="COMMITANDPUBLISH_PS1_GUIDE.md" />
     <None Include="CommitAndPush.ps1" />
     <None Include="COMMIT_AND_PUBLISH_GUIDE.md" />
+    <None Include="COMPANY_REFERENCES_CLEANUP.md" />
     <None Include="COMPANY_VERIFICATION.md" />
     <None Include="CreateGitHubRelease.ps1" />
     <None Include="CreateNuGetPackage-DevCmd.ps1" />
@@ -121,8 +128,11 @@
     <None Include="RELEASE_NOTES_v1.0.1.md" />
     <None Include="RELEASE_READY.md" />
     <None Include="RELEASE_v1.1.0_COMMANDS.md" />
+    <None Include="Remove-CompanyReferences.ps1" />
     <None Include="Remove-UnusedReferences.ps1" />
+    <None Include="Run-AutomatedTests.ps1" />
     <None Include="RUN_TESTS_GUIDE.md" />
+    <None Include="Setup-CICD.ps1" />
     <None Include="SetupNuGetApiKey.ps1" />
     <None Include="SIGNATURE_VERIFICATION.md" />
     <None Include="SyncToGitHub.ps1" />
