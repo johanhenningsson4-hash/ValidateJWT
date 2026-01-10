@@ -2,7 +2,7 @@
 
 ## ? Issue Fixed
 
-**Problem:** GitHub Actions workflows using deprecated `actions/upload-artifact@v3` and `actions/download-artifact@v3`
+**Problem:** GitHub Actions workflows using deprecated `actions/upload-artifact@v4` and `actions/download-artifact@v3`
 
 **Error Message:**
 ```
@@ -25,7 +25,7 @@ Learn more: https://github.blog/changelog/2024-04-16-deprecation-notice-v3-of-th
 ### Files Updated:
 
 #### 1. `.github/workflows/ci-cd.yml`
-- ? `actions/upload-artifact@v3` ? `v4` (3 occurrences)
+- ? `actions/upload-artifact@v4` ? `v4` (3 occurrences)
 - ? `actions/download-artifact@v3` ? `v4` (3 occurrences)
 
 **Locations:**
@@ -35,13 +35,13 @@ Learn more: https://github.blog/changelog/2024-04-16-deprecation-notice-v3-of-th
 - `github-release` job: Download build artifacts & NuGet package
 
 #### 2. `.github/workflows/nightly-build.yml`
-- ? `actions/upload-artifact@v3` ? `v4` (1 occurrence)
+- ? `actions/upload-artifact@v4` ? `v4` (1 occurrence)
 
 **Location:**
 - `nightly-build` job: Upload test results
 
 #### 3. `.github/workflows/code-coverage.yml`
-- ? `actions/upload-artifact@v3` ? `v4` (1 occurrence)
+- ? `actions/upload-artifact@v4` ? `v4` (1 occurrence)
 
 **Location:**
 - `coverage` job: Upload coverage report
@@ -66,7 +66,7 @@ Learn more: https://github.blog/changelog/2024-04-16-deprecation-notice-v3-of-th
 **Before:**
 ```yaml
 - name: Upload Test Results
-  uses: actions/upload-artifact@v3
+  uses: actions/upload-artifact@v4
   with:
     name: test-results
     path: TestResults/*.trx
@@ -185,7 +185,7 @@ Learn more: https://github.blog/changelog/2024-04-16-deprecation-notice-v3-of-th
 ```
 fix: Update GitHub Actions artifact actions from v3 to v4
 
-- Update actions/upload-artifact@v3 to v4 (5 occurrences)
+- Update actions/upload-artifact@v4 to v4 (5 occurrences)
 - Update actions/download-artifact@v3 to v4 (3 occurrences)
 - Resolve deprecation warnings
 - Improve workflow performance and reliability
