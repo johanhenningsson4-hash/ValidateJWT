@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -60,9 +60,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Add-BouncyCastle.ps1" />
     <None Include="App.config" />
-    <None Include="BOUNCYCASTLE_INTEGRATION.md" />
     <None Include="BuildAndPublish-NuGet.ps1" />
     <None Include="BuildNuGetPackage.bat" />
     <None Include="Cleanup-Code.ps1" />
@@ -83,7 +81,6 @@
     <None Include="FINAL_COMPANY_VERIFICATION.md" />
     <None Include="FINAL_STATUS_COMPLETE.md" />
     <None Include="FINAL_SUCCESS.md" />
-    <None Include="Fix-And-RunTests.ps1" />
     <None Include="GITHUB_RELEASE_COMPLETE.md" />
     <None Include="GITHUB_RELEASE_GUIDE.md" />
     <None Include="MSBUILD_FIX.md" />
@@ -122,7 +119,6 @@
     <None Include="RELEASE_READY.md" />
     <None Include="RELEASE_v1.1.0_COMMANDS.md" />
     <None Include="Remove-UnusedReferences.ps1" />
-    <None Include="RUN_TESTS_GUIDE.md" />
     <None Include="SetupNuGetApiKey.ps1" />
     <None Include="SIGNATURE_VERIFICATION.md" />
     <None Include="SyncToGitHub.ps1" />

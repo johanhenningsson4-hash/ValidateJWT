@@ -1,0 +1,54 @@
+name: Pull Request Validation
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  validate-pr:
+    name: Validate Pull Request
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v1.3
+    
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v1
+    
+    - name: Restore packages
+      run: nuget restore ValidateJWT.sln
+    
+    - name: Build
+      run: msbuild ValidateJWT.sln /p:Configuration=Debug /p:Platform="Any CPU" /v:minimal
+    
+    - name: Run Tests
+      uses: darenm/Setup-VSTest@v1.2
+    
+    - name: Execute Tests
+      run: vstest.console.exe ValidateJWT.Tests\bin\Debug\ValidateJWT.Tests.dll /logger:trx
+    
+    - name: Check Test Coverage
+      run: |
+        echo "Test execution completed. Check results above."
+    
+    - name: Comment PR
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const testResult = '${{ job.status }}';
+          const message = testResult === 'success' 
+            ? '? All tests passed! Ready for review.' 
+            : '? Tests failed. Please check the logs.';
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: message
+          });

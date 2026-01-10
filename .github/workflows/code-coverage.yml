@@ -1,0 +1,61 @@
+name: Code Coverage
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  coverage:
+    name: Code Coverage Analysis
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v1.3
+    
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v1
+    
+    - name: Install dotnet-coverage tool
+      run: dotnet tool install -g dotnet-coverage
+    
+    - name: Restore packages
+      run: nuget restore ValidateJWT.sln
+    
+    - name: Build Solution
+      run: msbuild ValidateJWT.sln /p:Configuration=Debug /p:Platform="Any CPU"
+    
+    - name: Setup VSTest
+      uses: darenm/Setup-VSTest@v1.2
+    
+    - name: Collect Coverage
+      run: |
+        dotnet-coverage collect -f cobertura -o coverage.cobertura.xml vstest.console.exe ValidateJWT.Tests\bin\Debug\ValidateJWT.Tests.dll
+      continue-on-error: true
+    
+    - name: Upload Coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.cobertura.xml
+        flags: unittests
+        name: codecov-validatjwt
+        fail_ci_if_error: false
+    
+    - name: Generate Coverage Report
+      run: |
+        dotnet tool install -g dotnet-reportgenerator-globaltool
+        reportgenerator -reports:coverage.cobertura.xml -targetdir:CoverageReport -reporttypes:Html
+      continue-on-error: true
+    
+    - name: Upload Coverage Report
+      uses: actions/upload-artifact@v3
+      with:
+        name: coverage-report
+        path: CoverageReport/
+        retention-days: 30
+      if: always()
