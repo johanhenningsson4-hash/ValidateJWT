@@ -558,3 +558,19 @@ For questions, issues, or feature requests:
 **Framework:** .NET Framework 4.7.2  
 **Last Updated:** January 2026  
 **Status:** ? Production-Ready | ? CI/CD Enabled | ? Fully Automated
+
+## ?? Build Instructions
+
+To build the library and run tests, always use the platform string `AnyCPU` (no space):
+
+```powershell
+msbuild ValidateJWT.sln /p:Configuration=Release /p:Platform=AnyCPU
+```
+
+If you use `Any CPU` (with a space), you may get an error about `BaseOutputPath/OutputPath property is not set`.
+
+**Troubleshooting:**
+- If you see an error about `BaseOutputPath/OutputPath property is not set`, check that you are using `AnyCPU` (no space) for the platform.
+- Both Debug and Release configurations are supported for `AnyCPU`, `x64`, and `x86` (if defined in the project file).
+
+---
