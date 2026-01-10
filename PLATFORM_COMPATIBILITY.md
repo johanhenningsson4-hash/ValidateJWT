@@ -306,3 +306,19 @@ Your library **already works on both platforms** as-is! The optional enhancement
 ---
 
 *Platform Compatibility Verified: January 2026*
+
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  release:
+    types: [ published ]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+  actions: read

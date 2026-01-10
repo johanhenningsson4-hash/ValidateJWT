@@ -104,7 +104,8 @@ namespace Johan.Common
             if (claims == null) return false;
 
             var exp = ParseUnix(claims.Exp);
-            if (exp != null && now > exp.Value.Add(skew)) return false;
+            if (exp == null) return false; // Fix: No expiration claim means not valid
+            if (now > exp.Value.Add(skew)) return false;
 
             return true;
         }
