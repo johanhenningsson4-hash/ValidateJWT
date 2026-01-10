@@ -8,6 +8,12 @@ on:
   release:
     types: [ published ]
 
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+  actions: read
+
 env:
   DOTNET_VERSION: '4.7.2'
   PROJECT_NAME: 'ValidateJWT'

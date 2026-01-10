@@ -6,6 +6,11 @@ on:
     - cron: '0 2 * * *'
   workflow_dispatch:  # Allow manual trigger
 
+permissions:
+  contents: read
+  issues: write
+  actions: read
+
 jobs:
   nightly-build:
     name: Nightly Build and Test
