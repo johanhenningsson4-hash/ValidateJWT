@@ -24,7 +24,7 @@ namespace ValidateJWT.Tests
             string base64Url = "SGVsbG8tV29ybGQ";
             var result = Base64UrlDecode(base64Url);
             Assert.IsNotNull(result);
-            Assert.IsTrue(result.Length > 0);
+            Assert.IsNotEmpty(result);
         }
 
         [TestMethod]
@@ -33,7 +33,7 @@ namespace ValidateJWT.Tests
             string base64Url = "SGVsbG9fV29ybGQ";
             var result = Base64UrlDecode(base64Url);
             Assert.IsNotNull(result);
-            Assert.IsTrue(result.Length > 0);
+            Assert.IsNotEmpty(result);
         }
 
         [TestMethod]
@@ -77,7 +77,7 @@ namespace ValidateJWT.Tests
         {
             var result = Base64UrlDecode(string.Empty);
             Assert.IsNotNull(result);
-            Assert.AreEqual(0, result.Length);
+            Assert.IsEmpty(result);
         }
 
         [TestMethod]
@@ -85,7 +85,7 @@ namespace ValidateJWT.Tests
         {
             var result = Base64UrlDecode(null);
             Assert.IsNotNull(result);
-            Assert.AreEqual(0, result.Length);
+            Assert.IsEmpty(result);
         }
 
         [TestMethod]
@@ -145,9 +145,9 @@ namespace ValidateJWT.Tests
         {
             string jwtPayload = "eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ";
             string decoded = Encoding.UTF8.GetString(Base64UrlDecode(jwtPayload));
-            Assert.IsTrue(decoded.Contains("\"sub\":\"1234567890\""));
-            Assert.IsTrue(decoded.Contains("\"name\":\"John Doe\""));
-            Assert.IsTrue(decoded.Contains("\"iat\":1516239022"));
+            StringAssert.Contains(decoded, "\"sub\":\"1234567890\"");
+            StringAssert.Contains(decoded, "\"name\":\"John Doe\"");
+            StringAssert.Contains(decoded, "\"iat\":1516239022");
         }
 
         [TestMethod]
@@ -162,15 +162,16 @@ namespace ValidateJWT.Tests
             CollectionAssert.AreEqual(originalBytes, result);
         }
 
-        [DataTestMethod]
-        [DataRow("QUJD")]
-        [DataRow("QUI")]
-        [DataRow("QQ")]
-        public void Base64UrlDecode_AllPaddingScenarios_WorkCorrectly(string input)
+        [TestMethod]
+        public void Base64UrlDecode_AllPaddingScenarios_WorkCorrectly()
         {
-            var result = Base64UrlDecode(input);
-            Assert.IsNotNull(result);
-            Assert.IsTrue(result.Length > 0);
+            string[] testInputs = { "QUJD", "QUI", "QQ" };
+            foreach (var input in testInputs)
+            {
+                var result = Base64UrlDecode(input);
+                Assert.IsNotNull(result);
+                Assert.IsNotEmpty(result);
+            }
         }
 
         private static string Base64UrlEncode(string input)
