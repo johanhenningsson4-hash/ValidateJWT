@@ -12,6 +12,7 @@
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
 	<NoWarn>$(NoWarn);MSTEST0001</NoWarn>
+	<ParallelizeTestCollections>true</ParallelizeTestCollections>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
