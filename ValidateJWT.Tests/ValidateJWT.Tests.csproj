@@ -24,6 +24,7 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+	<NoWarn>$(NoWarn);MSTEST0001</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
