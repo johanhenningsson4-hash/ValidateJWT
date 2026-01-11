@@ -25,7 +25,7 @@ jobs:
       run: nuget restore ValidateJWT.sln
     
     - name: Build
-      run: msbuild ValidateJWT.sln /p:Configuration=Debug /p:Platform="Any CPU" /v:minimal
+      run: msbuild ValidateJWT.sln /p:Configuration=Debug /p:Platform="AnyCPU" /v:minimal
     
     - name: Run Tests
       uses: darenm/Setup-VSTest@v1.2

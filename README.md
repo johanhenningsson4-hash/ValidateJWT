@@ -567,7 +567,7 @@ To build the library and run tests, always use the platform string `AnyCPU` (no 
 msbuild ValidateJWT.sln /p:Configuration=Release /p:Platform=AnyCPU
 ```
 
-If you use `Any CPU` (with a space), you may get an error about `BaseOutputPath/OutputPath property is not set`.
+If you use `AnyCPU` (with a space), you may get an error about `BaseOutputPath/OutputPath property is not set`.
 
 **Troubleshooting:**
 - If you see an error about `BaseOutputPath/OutputPath property is not set`, check that you are using `AnyCPU` (no space) for the platform.

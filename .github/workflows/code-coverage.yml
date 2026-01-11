@@ -33,7 +33,7 @@ jobs:
       run: nuget restore ValidateJWT.sln
     
     - name: Build Solution
-      run: msbuild ValidateJWT.sln /p:Configuration=Debug /p:Platform="Any CPU"
+      run: msbuild ValidateJWT.sln /p:Configuration=Debug /p:Platform="AnyCPU"
     
     - name: Setup VSTest
       uses: darenm/Setup-VSTest@v1.2

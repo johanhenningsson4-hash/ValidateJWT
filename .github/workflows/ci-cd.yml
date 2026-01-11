@@ -44,10 +44,10 @@ jobs:
       run: nuget restore ValidateJWT.sln
     
     - name: Build Solution (Debug)
-      run: msbuild ValidateJWT.sln /p:Configuration=Debug /p:Platform="Any CPU" /m /v:minimal
+      run: msbuild ValidateJWT.sln /p:Configuration=Debug /p:Platform="AnyCPU" /m /v:minimal
     
     - name: Build Solution (Release)
-      run: msbuild ValidateJWT.sln /p:Configuration=Release /p:Platform="Any CPU" /m /v:minimal
+      run: msbuild ValidateJWT.sln /p:Configuration=Release /p:Platform="AnyCPU" /m /v:minimal
     
     - name: Setup VSTest
       uses: darenm/Setup-VSTest@v1.2
@@ -96,7 +96,7 @@ jobs:
       run: nuget restore ValidateJWT.sln
     
     - name: Build for Analysis
-      run: msbuild ValidateJWT.sln /p:Configuration=Release /p:Platform="Any CPU"
+      run: msbuild ValidateJWT.sln /p:Configuration=Release /p:Platform="AnyCPU"
     
     - name: Run Code Analysis
       run: msbuild ValidateJWT.csproj /p:RunCodeAnalysis=true /p:CodeAnalysisRuleSet=MinimumRecommendedRules.ruleset
@@ -141,7 +141,7 @@ jobs:
       run: nuget restore ValidateJWT.sln
     
     - name: Build Release
-      run: msbuild ValidateJWT.csproj /p:Configuration=Release /p:Platform="Any CPU"
+      run: msbuild ValidateJWT.csproj /p:Configuration=Release /p:Platform="AnyCPU"
     
     - name: Create NuGet Package
       run: nuget pack ValidateJWT.nuspec -OutputDirectory nupkg

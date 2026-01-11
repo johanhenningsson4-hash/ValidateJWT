@@ -114,7 +114,7 @@ Write-Host "  ? Packages restored" -ForegroundColor Green
 Write-Host ""
 Write-Host "[4/6] Building Solution ($Configuration)..." -ForegroundColor Cyan
 
-& $msbuild ValidateJWT.sln /t:Rebuild /p:Configuration=$Configuration /p:Platform="Any CPU" /v:minimal /nologo
+& $msbuild ValidateJWT.sln /t:Rebuild /p:Configuration=$Configuration /p:Platform="AnyCPU" /v:minimal /nologo
 
 if ($LASTEXITCODE -ne 0) {
     Write-Host "  ? Build failed!" -ForegroundColor Red

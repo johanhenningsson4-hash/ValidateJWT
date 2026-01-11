@@ -9,7 +9,7 @@
 
 ### Main Project: ? **SUCCESS!**
 ```
-1>------ Build started: Project: ValidateJWT, Configuration: Debug Any CPU ------
+1>------ Build started: Project: ValidateJWT, Configuration: Debug AnyCPU ------
 1>  ValidateJWT -> C:\Jobb\ValidateJWT\bin\Debug\ValidateJWT.dll
 ```
 

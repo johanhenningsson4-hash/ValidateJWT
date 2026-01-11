@@ -219,7 +219,7 @@ msbuild ValidateJWT.csproj /p:Configuration=Release /p:Platform=AnyCPU
 # Check output
 dumpbin /headers bin\Release\ValidateJWT.dll
 
-# Look for: "machine (x8664 or x86)" should show "Any CPU"
+# Look for: "machine (x8664 or x86)" should show "AnyCPU"
 ```
 
 ### Test on x86 Project:
