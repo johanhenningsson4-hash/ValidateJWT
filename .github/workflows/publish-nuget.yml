@@ -1,0 +1,44 @@
+name: Publish NuGet Package
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  packages: write
+  actions: read
+
+jobs:
+  publish-nuget:
+    name: Publish NuGet Package
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v1.3
+
+      - name: Setup NuGet
+        uses: NuGet/setup-nuget@v1
+
+      - name: Restore packages
+        run: nuget restore ValidateJWT.sln
+
+      - name: Build Release
+        run: msbuild ValidateJWT.csproj /p:Configuration=Release /p:Platform=AnyCPU
+
+      - name: Create NuGet Package
+        run: nuget pack ValidateJWT.nuspec -OutputDirectory nupkg
+
+      - name: Publish to NuGet.org
+        run: nuget push nupkg/*.nupkg -Source https://api.nuget.org/v3/index.json -ApiKey ${{ secrets.NUGET_API_KEY }} -SkipDuplicate
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+
+      - name: Upload NuGet Package as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuget-package
+          path: nupkg/*.nupkg

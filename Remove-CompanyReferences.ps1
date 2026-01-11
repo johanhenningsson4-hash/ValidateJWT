@@ -1,5 +1,5 @@
 # Remove Company References - ValidateJWT Cleanup Script
-# Removes all references to Diebold Nixdorf, MTR, and TPDotnet from the solution
+# Removes all references to Johan Henningsson, MTR, and TPDotnet from the solution
 
 param(
     [Parameter(Mandatory=$false)]
@@ -28,7 +28,7 @@ Set-Location $projectRoot
 $companyTerms = @(
     "Diebold",
     "Nixdorf",
-    "Diebold Nixdorf",
+    "Johan Henningsson",
     "MTR",
     "TPDotnet",
     "TPDotNet",

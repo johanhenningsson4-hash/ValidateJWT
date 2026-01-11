@@ -2,14 +2,14 @@
 
 ## ?? Overview
 
-This document provides a complete guide to removing all references to Diebold Nixdorf, MTR, and TPDotnet from the ValidateJWT project to make it suitable for public release.
+This document provides a complete guide to removing all references to Johan Henningsson, MTR, and TPDotnet from the ValidateJWT project to make it suitable for public release.
 
 ---
 
 ## ?? What Was Found
 
 ### Company Terms to Remove:
-- **Diebold / Diebold Nixdorf** - Hardware manufacturer
+- **Diebold / Johan Henningsson** - Hardware manufacturer
 - **MTR** - Internal project/division name
 - **TPDotnet / TPDotNet** - Internal library/framework
 - **TechServices** - Internal service name
