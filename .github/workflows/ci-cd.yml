@@ -154,7 +154,7 @@ jobs:
     
     - name: Verify Package Contents
       run: |
-        nuget verify -All nupkg/*.nupkg
+        nuget verify -All nupkg\*.nupkg
       continue-on-error: true
 
   # Job 5: Publish to NuGet (only on release)
