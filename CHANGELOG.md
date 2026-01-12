@@ -5,7 +5,7 @@ All notable changes to the ValidateJWT project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.1.0] - 2026-01-XX
+## [1.2.0] - 2026-01-11
 
 ### Added
 - **JWT Signature Verification** - Major new feature
@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Detailed verification results with error messages
 - Optional expiration checking included in verification result
 - Complete documentation (SIGNATURE_VERIFICATION.md)
+- `IsIssuerValid()` function for validating the 'iss' (issuer) claim in JWT tokens
 
 ### Improved
 - Enhanced security with full JWT validation capability

@@ -409,7 +409,11 @@ public void VerifySignature_ValidToken_ReturnsTrue()
 
 ## ?? Version History
 
-### v1.1.0 (Latest) ??
+### v1.2.0 (Latest) ??
+- Added `IsIssuerValid()` for 'iss' claim validation
+- All previous features retained
+
+### v1.1.0
 - Added JWT signature verification (HS256, RS256)
 - New `VerifySignature()` and `VerifySignatureRS256()` methods
 - New `JwtVerificationResult` class

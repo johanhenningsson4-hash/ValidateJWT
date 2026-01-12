@@ -313,6 +313,51 @@ namespace Johan.Common
             return header?.Alg;
         }
 
+        /// <summary>
+        /// Validates the 'iss' (issuer) claim in a JWT token.
+        /// </summary>
+        /// <param name="jwt">The JWT token string to validate</param>
+        /// <param name="expectedIssuer">The expected issuer value</param>
+        /// <returns>True if the issuer matches; false otherwise or if the claim is missing/invalid</returns>
+        public static bool IsIssuerValid(string jwt, string expectedIssuer)
+        {
+            if (string.IsNullOrWhiteSpace(jwt) || string.IsNullOrWhiteSpace(expectedIssuer))
+                return false;
+
+            var parts = jwt.Split('.');
+            if (parts.Length < 2) return false;
+
+            try
+            {
+                var payloadBytes = Base64UrlDecode(parts[1]);
+                var payloadJson = Encoding.UTF8.GetString(payloadBytes);
+                // Simple string search for 'iss' claim (works for flat JWTs)
+                var issKey = "\"iss\":";
+                var idx = payloadJson.IndexOf(issKey, StringComparison.OrdinalIgnoreCase);
+                if (idx == -1) return false;
+                var afterKey = payloadJson.Substring(idx + issKey.Length).TrimStart();
+                // Support both quoted and unquoted values
+                if (afterKey.StartsWith("\""))
+                {
+                    var endIdx = afterKey.IndexOf('"', 1);
+                    if (endIdx == -1) return false;
+                    var value = afterKey.Substring(1, endIdx - 1);
+                    return string.Equals(value, expectedIssuer, StringComparison.Ordinal);
+                }
+                else
+                {
+                    // Unquoted value (rare)
+                    var endIdx = afterKey.IndexOfAny(new[] { ',', '}', ' ' });
+                    var value = endIdx == -1 ? afterKey : afterKey.Substring(0, endIdx);
+                    return string.Equals(value, expectedIssuer, StringComparison.Ordinal);
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         private static JwtHeader ParseHeader(string jwt)
         {
             if (string.IsNullOrWhiteSpace(jwt)) return null;
