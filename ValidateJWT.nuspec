@@ -8,7 +8,8 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <license type="file">LICENSE.txt</license>
     <projectUrl>https://github.com/johanhenningsson4-hash/ValidateJWT</projectUrl>
-    <iconUrl>https://raw.githubusercontent.com/johanhenningsson4-hash/ValidateJWT/main/icon.png</iconUrl>
+    <icon>icon.png</icon>
+    <readme>README.md</readme>
     <description>Lightweight .NET Framework 4.7.2 library for validating JWT expiration and verifying signatures (HS256, RS256). No dependencies. Well-tested, production-ready, and CI/CD enabled.</description>
     <releaseNotes>v1.1.0 - Adds signature verification (HS256, RS256), new helpers, and improved docs.</releaseNotes>
     <copyright>Copyright © Johan Henningsson 2026</copyright>
@@ -23,5 +24,6 @@
     <file src="bin\Release\ValidateJWT.xml" target="lib\net472\" />
     <file src="LICENSE.txt" target="" />
     <file src="README.md" target="" />
+    <file src="icon.png" target="" />
   </files>
 </package>
