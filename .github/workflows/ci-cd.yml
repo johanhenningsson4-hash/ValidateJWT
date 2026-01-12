@@ -173,7 +173,7 @@ jobs:
     
     - name: Push to NuGet
       run: |
-        nuget push nupkg/*.nupkg -Source ${{ env.NUGET_SOURCE }} -ApiKey ${{ secrets.NUGET_API_KEY }} -SkipDuplicate
+        nuget push nupkg\*.nupkg -Source ${{ env.NUGET_SOURCE }} -ApiKey ${{ secrets.NUGET_API_KEY }} -SkipDuplicate
       env:
         NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
 
