@@ -17,14 +17,14 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{46918B27-6B53-4899-BC1C-FC7EAEF71871}.Debug|AnyCPU.ActiveCfg = Debug|AnyCPU
-		{46918B27-6B53-4899-BC1C-FC7EAEF71871}.Debug|AnyCPU.Build.0 = Debug|AnyCPU
+		{46918B27-6B53-4899-BC1C-FC7EAEF71871}.Debug|AnyCPU.ActiveCfg = Debug|Any CPU
+		{46918B27-6B53-4899-BC1C-FC7EAEF71871}.Debug|AnyCPU.Build.0 = Debug|Any CPU
 		{46918B27-6B53-4899-BC1C-FC7EAEF71871}.Debug|x64.ActiveCfg = Debug|x64
 		{46918B27-6B53-4899-BC1C-FC7EAEF71871}.Debug|x64.Build.0 = Debug|x64
 		{46918B27-6B53-4899-BC1C-FC7EAEF71871}.Debug|x86.ActiveCfg = Debug|x86
 		{46918B27-6B53-4899-BC1C-FC7EAEF71871}.Debug|x86.Build.0 = Debug|x86
-		{46918B27-6B53-4899-BC1C-FC7EAEF71871}.Release|AnyCPU.ActiveCfg = Release|AnyCPU
-		{46918B27-6B53-4899-BC1C-FC7EAEF71871}.Release|AnyCPU.Build.0 = Release|AnyCPU
+		{46918B27-6B53-4899-BC1C-FC7EAEF71871}.Release|AnyCPU.ActiveCfg = Release|Any CPU
+		{46918B27-6B53-4899-BC1C-FC7EAEF71871}.Release|AnyCPU.Build.0 = Release|Any CPU
 		{46918B27-6B53-4899-BC1C-FC7EAEF71871}.Release|x64.ActiveCfg = Release|x64
 		{46918B27-6B53-4899-BC1C-FC7EAEF71871}.Release|x64.Build.0 = Release|x64
 		{46918B27-6B53-4899-BC1C-FC7EAEF71871}.Release|x86.ActiveCfg = Release|x86
