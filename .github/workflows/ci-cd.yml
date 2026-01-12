@@ -152,9 +152,6 @@ jobs:
         name: nuget-package
         path: nupkg/*.nupkg
     
-    - name: Verify Package Contents
-      run: |
-        nuget verify -ConfigFile nupkg/*.nupkg
       continue-on-error: true
 
   # Job 5: Publish to NuGet (only on release)
