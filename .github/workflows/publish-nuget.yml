@@ -33,7 +33,7 @@ jobs:
         run: nuget pack ValidateJWT.nuspec -OutputDirectory nupkg
 
       - name: Publish to NuGet.org
-        run: nuget push nupkg/*.nupkg -Source https://api.nuget.org/v3/index.json -ApiKey ${{ secrets.NUGET_API_KEY }} -SkipDuplicate
+        run: nuget push nupkg\*.nupkg -Source https://api.nuget.org/v3/index.json -ApiKey ${{ secrets.NUGET_API_KEY }} -SkipDuplicate
         env:
           NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
 
