@@ -20,11 +20,11 @@
     <ReferencePath>$(ProgramFiles)\Common Files\microsoft shared\VSTT\$(VisualStudioVersion)\UITestExtensionPackages</ReferencePath>
     <IsCodedUITest>False</IsCodedUITest>
     <TestProjectType>UnitTest</TestProjectType>
-	<ParallelizeTestCollections>true</ParallelizeTestCollections>
+    <ParallelizeTestCollections>true</ParallelizeTestCollections>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-	<NoWarn>$(NoWarn);MSTEST0001</NoWarn>
+    <NoWarn>$(NoWarn);MSTEST0001</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -159,7 +159,6 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
-    <None Include="TEST_COVERAGE.md" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ValidateJWT.csproj">
