@@ -11,8 +11,8 @@
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
-	<NoWarn>$(NoWarn);MSTEST0001</NoWarn>
-	<ParallelizeTestCollections>true</ParallelizeTestCollections>
+    <NoWarn>$(NoWarn);MSTEST0001</NoWarn>
+    <ParallelizeTestCollections>true</ParallelizeTestCollections>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -31,7 +31,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <LangVersion>7.3</LangVersion>
     <ErrorReport>prompt</ErrorReport>
-  </PropertyGroup>  
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\x64\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
@@ -51,7 +51,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <LangVersion>7.3</LangVersion>
     <ErrorReport>prompt</ErrorReport>
-  </PropertyGroup>  
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\Debug\</OutputPath>
@@ -126,15 +126,12 @@
     <None Include="COMMIT_AND_PUBLISH_GUIDE.md" />
     <None Include="COMMIT_SUCCESS.md" />
     <None Include="COMPANY_REFERENCES_CLEANUP.md" />
-    <None Include="COMPANY_VERIFICATION.md" />
     <None Include="CreateGitHubRelease.ps1" />
     <None Include="CreateNuGetPackage-DevCmd.ps1" />
     <None Include="CreateNuGetPackage.ps1" />
     <None Include="CREATE_GITHUB_RELEASE.md" />
     <None Include="CREATE_PACKAGE_NOW.md" />
-    <None Include="FINAL_COMPANY_VERIFICATION.md" />
     <None Include="FINAL_STATUS_COMPLETE.md" />
-    <None Include="FINAL_SUCCESS.md" />
     <None Include="Fix-And-RunTests.ps1" />
     <None Include="GITHUB_ACTIONS_UPDATE.md" />
     <None Include="GITHUB_RELEASE_COMPLETE.md" />
@@ -142,12 +139,7 @@
     <None Include="GITHUB_SECRETS_SETUP.md" />
     <None Include="MSBUILD_FIX.md" />
     <None Include="NAMESPACE_CHANGE_SUMMARY.md" />
-    <None Include="NUGET_API_KEY_GUIDE.md" />
-    <None Include="NUGET_GUIDE.md" />
     <None Include="NUGET_PACKAGE_CREATION.md" />
-    <None Include="NUGET_PACKAGE_READY.md" />
-    <None Include="NUGET_QUICK_START.md" />
-    <None Include="NUGET_README_LICENSE.md" />
     <None Include="packages.config" />
     <None Include="PLATFORM_COMPATIBILITY.md" />
     <None Include="Properties\Settings.settings">
@@ -156,25 +148,14 @@
     </None>
     <None Include="Publish-NuGet.ps1" />
     <None Include="PublishRelease.bat" />
-    <None Include="PublishRelease_v1.0.1.bat" />
-    <None Include="PublishRelease_v1.1.0.bat" />
-    <None Include="PUBLISH_NOW.md" />
-    <None Include="PUBLISH_NUGET_GUIDE.md" />
-    <None Include="PUBLISH_NUGET_QUICK_REF.md" />
-    <None Include="PUBLISH_QUICK_START.md" />
     <None Include="PUSH_NOW.md" />
     <None Include="QUICK_START_API_KEY.md" />
     <None Include="README.md" />
-    <None Include="PROJECT_ANALYSIS.md" />
-    <None Include="ANALYSIS_SUMMARY.md" />
     <None Include="CHANGELOG.md" />
     <None Include="README_LICENSE_SUMMARY.md" />
     <None Include="README_UPDATE_SUMMARY.md" />
     <None Include="RELEASE_NOTES_v1.0.0.md" />
     <None Include="RELEASE_GUIDE.md" />
-    <None Include="RELEASE_NOTES_v1.0.1.md" />
-    <None Include="RELEASE_READY.md" />
-    <None Include="RELEASE_v1.1.0_COMMANDS.md" />
     <None Include="Remove-CompanyReferences.ps1" />
     <None Include="Remove-UnusedReferences.ps1" />
     <None Include="Run-AutomatedTests.ps1" />
@@ -183,20 +164,12 @@
     <None Include="SetupNuGetApiKey.ps1" />
     <None Include="SIGNATURE_VERIFICATION.md" />
     <None Include="SyncToGitHub.ps1" />
-    <None Include="SYNC_STATUS.md" />
     <None Include="UNUSED_REFERENCES_ANALYSIS.md" />
     <None Include="ValidateJWT.nuspec" />
     <None Include="Verify-CICD-Setup.ps1" />
     <None Include="VerifyNuGetPackage.ps1" />
-    <None Include="VERSION_1.0.1_READY.md" />
     <None Include="VERSION_1.1.0_READY.md" />
-    <None Include="WARNINGS_FIXED.md" />
-    <None Include="BUILD_ISSUES_FIXED.md" />
-    <None Include="OUTPUT_PATH_FIX.md" />
-    <None Include="TEST_PROJECT_FIX.md" />
     <None Include="FINAL_STATUS.md" />
-    <None Include="MANUAL_FIX_GUIDE.md" />
-    <None Include="FIX_COMPILER_ERRORS_NOW.md" />
     <None Include="VISUAL_FIX_GUIDE.md" />
     <None Include="RUN_THIS_FIX.md" />
     <None Include="RECOVERY_INSTRUCTIONS.md" />
