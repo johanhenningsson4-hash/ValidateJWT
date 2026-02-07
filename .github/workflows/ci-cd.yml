@@ -52,22 +52,33 @@ jobs:
     - name: Setup VSTest
       uses: darenm/Setup-VSTest@v1.2
     
+    - name: Create TestResults Directory
+      run: New-Item -ItemType Directory -Force -Path TestResults
+      shell: pwsh
+    
     - name: Run Unit Tests
       run: vstest.console.exe ValidateJWT.Tests\bin\Debug\ValidateJWT.Tests.dll /logger:trx /ResultsDirectory:TestResults
+    
+    - name: List Test Results (Debug)
+      run: |
+        Write-Host "Contents of TestResults directory:"
+        Get-ChildItem -Path TestResults -Recurse | ForEach-Object { Write-Host $_.FullName }
+      shell: pwsh
+      if: always()
     
     - name: Upload Test Results
       uses: actions/upload-artifact@v4
       if: always()
       with:
         name: test-results
-        path: TestResults/*.trx
+        path: TestResults/**/*.trx
     
     - name: Publish Test Results
       uses: dorny/test-reporter@v1
-      if: always()
+      if: always() && hashFiles('TestResults/**/*.trx') != ''
       with:
         name: Unit Test Results
-        path: TestResults/*.trx
+        path: TestResults/**/*.trx
         reporter: dotnet-trx
     
     - name: Upload Build Artifacts
