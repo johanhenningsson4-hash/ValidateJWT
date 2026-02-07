@@ -48,6 +48,18 @@ namespace ValidateJWT.Tests
         }
 
         /// <summary>
+        /// Creates a JWT token with custom JSON payload
+        /// </summary>
+        public static string CreateTestJwt(string jsonPayload)
+        {
+            string header = CreateBase64UrlEncodedHeader();
+            string payload = Base64UrlEncode(jsonPayload);
+            string signature = "fake-signature";
+
+            return $"{header}.{payload}.{signature}";
+        }
+
+        /// <summary>
         /// Creates a JWT token without expiration claim
         /// </summary>
         public static string CreateJwtWithoutExpiration()
