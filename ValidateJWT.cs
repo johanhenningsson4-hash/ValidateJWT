@@ -527,7 +527,8 @@ namespace Johan.Common
 
                 if (long.TryParse(timestampStr, out var timestamp))
                 {
-                    return UnixTimeStampToDateTime(timestamp);
+                    var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+                    return epoch.AddSeconds(timestamp);
                 }
 
                 return null;
