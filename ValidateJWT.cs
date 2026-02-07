@@ -358,6 +358,186 @@ namespace Johan.Common
             }
         }
 
+        /// <summary>
+        /// Validates the 'aud' (audience) claim in a JWT token.
+        /// </summary>
+        /// <param name="jwt">The JWT token string to validate</param>
+        /// <param name="expectedAudience">The expected audience value</param>
+        /// <returns>True if the audience matches; false otherwise or if the claim is missing/invalid</returns>
+        public static bool IsAudienceValid(string jwt, string expectedAudience)
+        {
+            if (string.IsNullOrWhiteSpace(jwt) || string.IsNullOrWhiteSpace(expectedAudience))
+                return false;
+
+            var parts = jwt.Split('.');
+            if (parts.Length < 2) return false;
+
+            try
+            {
+                var payloadBytes = Base64UrlDecode(parts[1]);
+                var payloadJson = Encoding.UTF8.GetString(payloadBytes);
+                
+                // Handle both single audience and array of audiences
+                var audKey = "\"aud\":";
+                var idx = payloadJson.IndexOf(audKey, StringComparison.OrdinalIgnoreCase);
+                if (idx == -1) return false;
+                
+                var afterKey = payloadJson.Substring(idx + audKey.Length).TrimStart();
+                
+                // Check if it's an array
+                if (afterKey.StartsWith("["))
+                {
+                    // Array format: "aud":["audience1","audience2"]
+                    var endIdx = afterKey.IndexOf(']');
+                    if (endIdx == -1) return false;
+                    var arrayContent = afterKey.Substring(1, endIdx - 1);
+                    return arrayContent.Contains("\"" + expectedAudience + "\"");
+                }
+                else if (afterKey.StartsWith("\""))
+                {
+                    // Single string format: "aud":"audience"
+                    var endIdx = afterKey.IndexOf('"', 1);
+                    if (endIdx == -1) return false;
+                    var value = afterKey.Substring(1, endIdx - 1);
+                    return string.Equals(value, expectedAudience, StringComparison.Ordinal);
+                }
+                
+                return false;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Validates the 'nbf' (not before) claim in a JWT token.
+        /// </summary>
+        /// <param name="jwt">The JWT token string to validate</param>
+        /// <param name="clockSkew">Clock skew tolerance (default: 5 minutes)</param>
+        /// <param name="nowUtc">Current UTC time (default: DateTime.UtcNow)</param>
+        /// <returns>True if the token is not being used before its 'nbf' time; false otherwise</returns>
+        public static bool IsNotBeforeValid(string jwt, TimeSpan? clockSkew = null, DateTime? nowUtc = null)
+        {
+            var nbf = GetNotBeforeUtc(jwt);
+            if (!nbf.HasValue) return true; // No nbf claim means always valid
+
+            var currentTime = nowUtc ?? DateTime.UtcNow;
+            var tolerance = clockSkew ?? TimeSpan.FromMinutes(5);
+            
+            // Token is valid if current time + tolerance >= nbf
+            return currentTime.Add(tolerance) >= nbf.Value;
+        }
+
+        /// <summary>
+        /// Extracts the 'nbf' (not before) claim from a JWT token.
+        /// </summary>
+        /// <param name="jwt">The JWT token string</param>
+        /// <returns>The not before time in UTC, or null if not present or invalid</returns>
+        public static DateTime? GetNotBeforeUtc(string jwt)
+        {
+            return GetUnixTimestampClaim(jwt, "nbf");
+        }
+
+        /// <summary>
+        /// Extracts the 'iat' (issued at) claim from a JWT token.
+        /// </summary>
+        /// <param name="jwt">The JWT token string</param>
+        /// <returns>The issued at time in UTC, or null if not present or invalid</returns>
+        public static DateTime? GetIssuedAtUtc(string jwt)
+        {
+            return GetUnixTimestampClaim(jwt, "iat");
+        }
+
+        /// <summary>
+        /// Extracts the 'aud' (audience) claim from a JWT token.
+        /// </summary>
+        /// <param name="jwt">The JWT token string</param>
+        /// <returns>The audience value, or null if not present or invalid</returns>
+        public static string GetAudience(string jwt)
+        {
+            if (string.IsNullOrWhiteSpace(jwt))
+                return null;
+
+            var parts = jwt.Split('.');
+            if (parts.Length < 2) return null;
+
+            try
+            {
+                var payloadBytes = Base64UrlDecode(parts[1]);
+                var payloadJson = Encoding.UTF8.GetString(payloadBytes);
+                
+                var audKey = "\"aud\":";
+                var idx = payloadJson.IndexOf(audKey, StringComparison.OrdinalIgnoreCase);
+                if (idx == -1) return null;
+                
+                var afterKey = payloadJson.Substring(idx + audKey.Length).TrimStart();
+                
+                if (afterKey.StartsWith("\""))
+                {
+                    // Single string format
+                    var endIdx = afterKey.IndexOf('"', 1);
+                    if (endIdx == -1) return null;
+                    return afterKey.Substring(1, endIdx - 1);
+                }
+                else if (afterKey.StartsWith("["))
+                {
+                    // Array format - return first audience
+                    var arrayStart = afterKey.IndexOf("\"");
+                    if (arrayStart == -1) return null;
+                    var arrayEnd = afterKey.IndexOf("\"", arrayStart + 1);
+                    if (arrayEnd == -1) return null;
+                    return afterKey.Substring(arrayStart + 1, arrayEnd - arrayStart - 1);
+                }
+                
+                return null;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Helper method to extract Unix timestamp claims from JWT payload.
+        /// </summary>
+        /// <param name="jwt">The JWT token string</param>
+        /// <param name="claimName">The claim name (e.g., "exp", "nbf", "iat")</param>
+        /// <returns>The timestamp as DateTime in UTC, or null if not present or invalid</returns>
+        private static DateTime? GetUnixTimestampClaim(string jwt, string claimName)
+        {
+            if (string.IsNullOrWhiteSpace(jwt) || string.IsNullOrWhiteSpace(claimName))
+                return null;
+
+            var parts = jwt.Split('.');
+            if (parts.Length < 2) return null;
+
+            try
+            {
+                var payloadBytes = Base64UrlDecode(parts[1]);
+                var payloadJson = Encoding.UTF8.GetString(payloadBytes);
+                
+                var claimKey = "\"" + claimName + "\":";
+                var idx = payloadJson.IndexOf(claimKey, StringComparison.OrdinalIgnoreCase);
+                if (idx == -1) return null;
+
+                var afterKey = payloadJson.Substring(idx + claimKey.Length).TrimStart();
+                var endIdx = afterKey.IndexOfAny(new[] { ',', '}', ' ', '\r', '\n' });
+                var timestampStr = endIdx == -1 ? afterKey : afterKey.Substring(0, endIdx);
+
+                if (long.TryParse(timestampStr, out var timestamp))
+                {
+                    return UnixTimeStampToDateTime(timestamp);
+                }
+
+                return null;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         private static JwtHeader ParseHeader(string jwt)
         {
             if (string.IsNullOrWhiteSpace(jwt)) return null;

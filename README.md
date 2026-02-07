@@ -197,6 +197,70 @@ string algorithm = ValidateJWT.GetAlgorithm(token);
 
 ---
 
+### Claim Validation Methods
+
+#### `IsIssuerValid(jwt, expectedIssuer)`
+Validates the 'iss' (issuer) claim in a JWT token.
+
+```csharp
+bool isIssuerValid = ValidateJWT.IsIssuerValid(token, "https://my-issuer.example.com");
+```
+
+**Returns:** `bool` - True if the issuer matches, false otherwise or if the claim is missing/invalid.
+
+#### `IsAudienceValid(jwt, expectedAudience)`
+Validates the 'aud' (audience) claim in a JWT token. Supports both single audience and audience arrays.
+
+```csharp
+bool isAudienceValid = ValidateJWT.IsAudienceValid(token, "my-api");
+```
+
+**Returns:** `bool` - True if the audience matches, false otherwise or if the claim is missing/invalid.
+
+#### `IsNotBeforeValid(jwt, clockSkew, nowUtc)`
+Validates the 'nbf' (not before) claim in a JWT token.
+
+```csharp
+bool isNotBeforeValid = ValidateJWT.IsNotBeforeValid(token);
+bool isNotBeforeValid = ValidateJWT.IsNotBeforeValid(token, TimeSpan.FromMinutes(2));
+```
+
+**Parameters:**
+- `jwt` (string) - JWT token
+- `clockSkew` (TimeSpan?) - Clock skew tolerance (default: 5 minutes)
+- `nowUtc` (DateTime?) - Current UTC time (default: DateTime.UtcNow)
+
+**Returns:** `bool` - True if the token is not being used before its 'nbf' time, false otherwise.
+
+#### `GetNotBeforeUtc(jwt)`
+Extracts the 'nbf' (not before) time from a JWT token.
+
+```csharp
+DateTime? notBefore = ValidateJWT.GetNotBeforeUtc(token);
+```
+
+**Returns:** `DateTime?` - Not before time in UTC, or null if not found.
+
+#### `GetIssuedAtUtc(jwt)`
+Extracts the 'iat' (issued at) time from a JWT token.
+
+```csharp
+DateTime? issuedAt = ValidateJWT.GetIssuedAtUtc(token);
+```
+
+**Returns:** `DateTime?` - Issued at time in UTC, or null if not found.
+
+#### `GetAudience(jwt)`
+Extracts the 'aud' (audience) claim from a JWT token.
+
+```csharp
+string audience = ValidateJWT.GetAudience(token);
+```
+
+**Returns:** `string` - Audience value, or null if not found. For audience arrays, returns the first audience.
+
+---
+
 ### Helper Methods
 
 #### `Base64UrlDecode(input)`
@@ -409,7 +473,18 @@ public void VerifySignature_ValidToken_ReturnsTrue()
 
 ## ?? Version History
 
-### v1.2.0 (Latest) ??
+### v1.3.0 (Latest) ??
+- Added comprehensive JWT claim validation
+  - `IsAudienceValid()` for 'aud' claim validation (supports single and array formats)
+  - `IsNotBeforeValid()` for 'nbf' claim validation  
+  - `GetNotBeforeUtc()` for extracting 'nbf' timestamps
+  - `GetIssuedAtUtc()` for extracting 'iat' timestamps
+  - `GetAudience()` for extracting 'aud' claims
+- Enhanced claim parsing with better error handling
+- Support for audience arrays in addition to single audience strings
+- All previous features retained
+
+### v1.2.0
 - Added `IsIssuerValid()` for 'iss' claim validation
 - All previous features retained
 

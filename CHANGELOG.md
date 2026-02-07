@@ -5,6 +5,32 @@ All notable changes to the ValidateJWT project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2026-01-11
+
+### Added
+- **Comprehensive JWT Claim Validation** - Major enhancement
+  - `IsAudienceValid(jwt, expectedAudience)` method for 'aud' claim validation
+  - `IsNotBeforeValid(jwt, clockSkew, nowUtc)` method for 'nbf' claim validation
+  - `GetNotBeforeUtc(jwt)` method for extracting 'nbf' timestamps
+  - `GetIssuedAtUtc(jwt)` method for extracting 'iat' timestamps  
+  - `GetAudience(jwt)` method for extracting 'aud' claims
+- Support for audience arrays in addition to single audience strings
+- Enhanced claim parsing with robust error handling
+- Clock skew tolerance support for 'nbf' validation (default: 5 minutes)
+- Helper method `GetUnixTimestampClaim()` for consistent timestamp parsing
+
+### Improved
+- More comprehensive JWT validation capabilities
+- Better support for standard JWT claims beyond expiration
+- Consistent API design across all claim validation methods
+- Enhanced security with multi-claim validation support
+
+### Compatibility
+- 100% backward compatible with all previous versions
+- All existing methods unchanged and fully supported
+- No breaking changes
+- New claim validation features are opt-in
+
 ## [1.2.0] - 2026-01-11
 
 ### Added
