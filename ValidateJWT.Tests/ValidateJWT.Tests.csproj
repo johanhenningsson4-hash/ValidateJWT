@@ -151,6 +151,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClaimValidationTests.cs" />
     <Compile Include="ValidateJWTTests.cs" />
     <Compile Include="Base64UrlDecodeTests.cs" />
     <Compile Include="JwtTestHelper.cs" />
