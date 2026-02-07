@@ -20,8 +20,8 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\Release\ValidateJWT.dll" target="lib\net472\" />
-    <file src="bin\Release\ValidateJWT.xml" target="lib\net472\" />
+    <file src="bin\Release\Johan.Common.ValidateJWT.dll" target="lib\net472\" />
+    <file src="bin\Release\Johan.Common.ValidateJWT.xml" target="lib\net472\" />
     <file src="LICENSE.txt" target="" />
     <file src="README.md" target="" />
     <file src="icon.png" target="" />
