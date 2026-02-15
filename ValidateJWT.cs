@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.Security.Cryptography;
@@ -49,6 +51,60 @@ namespace Johan.Common
         /// Gets whether the token is expired (time-based check)
         /// </summary>
         public bool IsExpired { get; internal set; }
+    }
+
+    /// <summary>
+    /// Represents a JWT payload with standard and custom claims
+    /// </summary>
+    public class JwtPayload
+    {
+        /// <summary>
+        /// Gets or sets the issuer (iss) claim
+        /// </summary>
+        public string Issuer { get; set; }
+
+        /// <summary>
+        /// Gets or sets the subject (sub) claim
+        /// </summary>
+        public string Subject { get; set; }
+
+        /// <summary>
+        /// Gets or sets the audience (aud) claim. Can be a single audience or array.
+        /// </summary>
+        public string[] Audiences { get; set; }
+
+        /// <summary>
+        /// Gets or sets the expiration time (exp) claim
+        /// </summary>
+        public DateTime? ExpiresAt { get; set; }
+
+        /// <summary>
+        /// Gets or sets the not before (nbf) claim
+        /// </summary>
+        public DateTime? NotBefore { get; set; }
+
+        /// <summary>
+        /// Gets or sets the issued at (iat) claim
+        /// </summary>
+        public DateTime? IssuedAt { get; set; }
+
+        /// <summary>
+        /// Gets or sets the JWT ID (jti) claim
+        /// </summary>
+        public string JwtId { get; set; }
+
+        /// <summary>
+        /// Gets or sets custom claims
+        /// </summary>
+        public Dictionary<string, object> CustomClaims { get; set; }
+
+        /// <summary>
+        /// Initializes a new instance of JwtPayload
+        /// </summary>
+        public JwtPayload()
+        {
+            CustomClaims = new Dictionary<string, object>();
+        }
     }
 
     /// <summary>
@@ -499,6 +555,219 @@ namespace Johan.Common
         }
 
         /// <summary>
+        /// Extracts a claim from a JWT token with strong typing.
+        /// </summary>
+        /// <typeparam name="T">The type to convert the claim value to</typeparam>
+        /// <param name="jwt">The JWT token string</param>
+        /// <param name="claimName">The name of the claim to extract</param>
+        /// <returns>The claim value converted to type T, or default(T) if not found or conversion fails</returns>
+        public static T GetClaim<T>(string jwt, string claimName)
+        {
+            if (string.IsNullOrWhiteSpace(jwt) || string.IsNullOrWhiteSpace(claimName))
+                return default(T);
+
+            var parts = jwt.Split('.');
+            if (parts.Length < 2) return default(T);
+
+            try
+            {
+                var payloadBytes = Base64UrlDecode(parts[1]);
+                var payloadJson = Encoding.UTF8.GetString(payloadBytes);
+
+                var claimKey = "\"" + claimName + "\":";
+                var idx = payloadJson.IndexOf(claimKey, StringComparison.OrdinalIgnoreCase);
+                if (idx == -1) return default(T);
+
+                var afterKey = payloadJson.Substring(idx + claimKey.Length).TrimStart();
+
+                // Handle different value types
+                if (afterKey.StartsWith("\""))
+                {
+                    // String value
+                    var endIdx = afterKey.IndexOf('"', 1);
+                    if (endIdx == -1) return default(T);
+                    var stringValue = afterKey.Substring(1, endIdx - 1);
+                    return ConvertClaimValue<T>(stringValue, true);
+                }
+                else if (afterKey.StartsWith("["))
+                {
+                    // Array value
+                    var endIdx = afterKey.IndexOf(']');
+                    if (endIdx == -1) return default(T);
+                    var arrayValue = afterKey.Substring(0, endIdx + 1);
+                    return ConvertClaimValue<T>(arrayValue, false);
+                }
+                else
+                {
+                    // Numeric, boolean, or null value
+                    var endIdx = afterKey.IndexOfAny(new[] { ',', '}', '\r', '\n' });
+                    var rawValue = endIdx == -1 ? afterKey.Trim() : afterKey.Substring(0, endIdx).Trim();
+                    return ConvertClaimValue<T>(rawValue, false);
+                }
+            }
+            catch
+            {
+                return default(T);
+            }
+        }
+
+        /// <summary>
+        /// Checks if a JWT token contains a specific claim.
+        /// </summary>
+        /// <param name="jwt">The JWT token string</param>
+        /// <param name="claimName">The name of the claim to check</param>
+        /// <returns>True if the claim exists, false otherwise</returns>
+        public static bool HasClaim(string jwt, string claimName)
+        {
+            if (string.IsNullOrWhiteSpace(jwt) || string.IsNullOrWhiteSpace(claimName))
+                return false;
+
+            var parts = jwt.Split('.');
+            if (parts.Length < 2) return false;
+
+            try
+            {
+                var payloadBytes = Base64UrlDecode(parts[1]);
+                var payloadJson = Encoding.UTF8.GetString(payloadBytes);
+
+                var claimKey = "\"" + claimName + "\":";
+                return payloadJson.IndexOf(claimKey, StringComparison.OrdinalIgnoreCase) != -1;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Converts a claim value to the specified type.
+        /// </summary>
+        private static T ConvertClaimValue<T>(string value, bool isStringValue)
+        {
+            if (string.IsNullOrEmpty(value) || value == "null")
+                return default(T);
+
+            var targetType = typeof(T);
+            var nullableType = Nullable.GetUnderlyingType(targetType);
+            var actualType = nullableType ?? targetType;
+
+            try
+            {
+                // Handle string types
+                if (actualType == typeof(string))
+                {
+                    return (T)(object)value;
+                }
+
+                // Handle DateTime (Unix timestamps)
+                if (actualType == typeof(DateTime))
+                {
+                    if (isStringValue)
+                    {
+                        // Try parsing as ISO 8601 string first
+                        if (DateTime.TryParse(value, out var dateTime))
+                        {
+                            return (T)(object)dateTime.ToUniversalTime();
+                        }
+                    }
+                    else
+                    {
+                        // Try parsing as Unix timestamp
+                        if (long.TryParse(value, out var unixTime))
+                        {
+                            var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+                            return (T)(object)epoch.AddSeconds(unixTime);
+                        }
+                    }
+                    return default(T);
+                }
+
+                // For non-string values, remove quotes if present
+                if (isStringValue && !actualType.Equals(typeof(string)))
+                {
+                    // The value is quoted but we need a non-string type
+                    // This might be a number or boolean stored as a string
+                }
+
+                // Handle numeric types
+                if (actualType == typeof(int))
+                {
+                    return int.TryParse(value, out var intValue) ? (T)(object)intValue : default(T);
+                }
+                if (actualType == typeof(long))
+                {
+                    return long.TryParse(value, out var longValue) ? (T)(object)longValue : default(T);
+                }
+                if (actualType == typeof(double))
+                {
+                    return double.TryParse(value, out var doubleValue) ? (T)(object)doubleValue : default(T);
+                }
+                if (actualType == typeof(decimal))
+                {
+                    return decimal.TryParse(value, out var decimalValue) ? (T)(object)decimalValue : default(T);
+                }
+
+                // Handle boolean
+                if (actualType == typeof(bool))
+                {
+                    if (value.Equals("true", StringComparison.OrdinalIgnoreCase))
+                        return (T)(object)true;
+                    if (value.Equals("false", StringComparison.OrdinalIgnoreCase))
+                        return (T)(object)false;
+                    return default(T);
+                }
+
+                // Handle arrays (simple string array support)
+                if (actualType == typeof(string[]) && !isStringValue)
+                {
+                    if (value.StartsWith("[") && value.EndsWith("]"))
+                    {
+                        var arrayContent = value.Substring(1, value.Length - 2).Trim();
+                        if (string.IsNullOrEmpty(arrayContent))
+                            return (T)(object)new string[0];
+
+                        // Simple array parsing (assumes string elements)
+                        var elements = new List<string>();
+                        var inQuotes = false;
+                        var current = new StringBuilder();
+
+                        for (int i = 0; i < arrayContent.Length; i++)
+                        {
+                            var c = arrayContent[i];
+                            if (c == '"' && (i == 0 || arrayContent[i - 1] != '\\'))
+                            {
+                                inQuotes = !inQuotes;
+                            }
+                            else if (c == ',' && !inQuotes)
+                            {
+                                elements.Add(current.ToString().Trim().Trim('"'));
+                                current.Clear();
+                            }
+                            else if (!char.IsWhiteSpace(c) || inQuotes)
+                            {
+                                current.Append(c);
+                            }
+                        }
+
+                        if (current.Length > 0)
+                        {
+                            elements.Add(current.ToString().Trim().Trim('"'));
+                        }
+
+                        return (T)(object)elements.ToArray();
+                    }
+                }
+
+                // Fallback: try direct conversion
+                return (T)Convert.ChangeType(value, actualType);
+            }
+            catch
+            {
+                return default(T);
+            }
+        }
+
+        /// <summary>
         /// Helper method to extract Unix timestamp claims from JWT payload.
         /// </summary>
         /// <param name="jwt">The JWT token string</param>
@@ -646,6 +915,272 @@ namespace Johan.Common
 
             var base64 = Convert.ToBase64String(input);
             return base64.Replace('+', '-').Replace('/', '_').TrimEnd('=');
+        }
+
+        /// <summary>
+        /// Creates a JWT token with the specified payload and signs it using HMAC-SHA256.
+        /// </summary>
+        /// <param name="payload">The JWT payload containing claims</param>
+        /// <param name="secretKey">The secret key for HMAC signing</param>
+        /// <returns>A signed JWT token string</returns>
+        public static string CreateJwt(JwtPayload payload, string secretKey)
+        {
+            return CreateJwt(payload, secretKey, "HS256");
+        }
+
+        /// <summary>
+        /// Creates a JWT token with the specified payload and signs it using the specified algorithm.
+        /// </summary>
+        /// <param name="payload">The JWT payload containing claims</param>
+        /// <param name="secretKey">The secret key for HMAC signing (HS256 only)</param>
+        /// <param name="algorithm">The signing algorithm ("HS256" only for this overload)</param>
+        /// <returns>A signed JWT token string</returns>
+        public static string CreateJwt(JwtPayload payload, string secretKey, string algorithm)
+        {
+            if (payload == null)
+                throw new ArgumentNullException(nameof(payload));
+            if (string.IsNullOrWhiteSpace(secretKey))
+                throw new ArgumentNullException(nameof(secretKey));
+            if (algorithm != "HS256")
+                throw new ArgumentException("This overload only supports HS256. Use CreateJwtRS256 for RS256.", nameof(algorithm));
+
+            // Create header
+            var header = new { alg = algorithm, typ = "JWT" };
+            var headerJson = SerializeToJson(header);
+            var headerEncoded = Base64UrlEncode(Encoding.UTF8.GetBytes(headerJson));
+
+            // Create payload JSON
+            var payloadJson = SerializePayloadToJson(payload);
+            var payloadEncoded = Base64UrlEncode(Encoding.UTF8.GetBytes(payloadJson));
+
+            // Create signature
+            var headerPayload = headerEncoded + "." + payloadEncoded;
+            var signature = CreateHmacSignature(headerPayload, secretKey);
+
+            return headerEncoded + "." + payloadEncoded + "." + signature;
+        }
+
+        /// <summary>
+        /// Creates a JWT token with the specified payload and signs it using RSA-SHA256.
+        /// </summary>
+        /// <param name="payload">The JWT payload containing claims</param>
+        /// <param name="privateKeyXml">The RSA private key in XML format</param>
+        /// <returns>A signed JWT token string</returns>
+        public static string CreateJwtRS256(JwtPayload payload, string privateKeyXml)
+        {
+            if (payload == null)
+                throw new ArgumentNullException(nameof(payload));
+            if (string.IsNullOrWhiteSpace(privateKeyXml))
+                throw new ArgumentNullException(nameof(privateKeyXml));
+
+            // Create header
+            var header = new { alg = "RS256", typ = "JWT" };
+            var headerJson = SerializeToJson(header);
+            var headerEncoded = Base64UrlEncode(Encoding.UTF8.GetBytes(headerJson));
+
+            // Create payload JSON
+            var payloadJson = SerializePayloadToJson(payload);
+            var payloadEncoded = Base64UrlEncode(Encoding.UTF8.GetBytes(payloadJson));
+
+            // Create signature
+            var headerPayload = headerEncoded + "." + payloadEncoded;
+            var signature = CreateRsaSignature(headerPayload, privateKeyXml);
+
+            return headerEncoded + "." + payloadEncoded + "." + signature;
+        }
+
+        /// <summary>
+        /// Creates a simple JWT with basic claims.
+        /// </summary>
+        /// <param name="subject">The subject (sub) claim</param>
+        /// <param name="issuer">The issuer (iss) claim</param>
+        /// <param name="audience">The audience (aud) claim</param>
+        /// <param name="expiresInMinutes">Token expiration in minutes from now</param>
+        /// <param name="secretKey">The secret key for HMAC signing</param>
+        /// <returns>A signed JWT token string</returns>
+        public static string CreateSimpleJwt(string subject, string issuer, string audience, int expiresInMinutes, string secretKey)
+        {
+            var payload = new JwtPayload
+            {
+                Subject = subject,
+                Issuer = issuer,
+                Audiences = new[] { audience },
+                IssuedAt = DateTime.UtcNow,
+                ExpiresAt = DateTime.UtcNow.AddMinutes(expiresInMinutes)
+            };
+
+            return CreateJwt(payload, secretKey);
+        }
+
+        /// <summary>
+        /// Serializes a payload object to JSON.
+        /// </summary>
+        private static string SerializePayloadToJson(JwtPayload payload)
+        {
+            var claims = new Dictionary<string, object>();
+
+            // Add standard claims
+            if (!string.IsNullOrEmpty(payload.Issuer))
+                claims["iss"] = payload.Issuer;
+
+            if (!string.IsNullOrEmpty(payload.Subject))
+                claims["sub"] = payload.Subject;
+
+            if (payload.Audiences != null && payload.Audiences.Length > 0)
+            {
+                if (payload.Audiences.Length == 1)
+                    claims["aud"] = payload.Audiences[0];
+                else
+                    claims["aud"] = payload.Audiences;
+            }
+
+            if (payload.ExpiresAt.HasValue)
+                claims["exp"] = DateTimeToUnixTimestamp(payload.ExpiresAt.Value);
+
+            if (payload.NotBefore.HasValue)
+                claims["nbf"] = DateTimeToUnixTimestamp(payload.NotBefore.Value);
+
+            if (payload.IssuedAt.HasValue)
+                claims["iat"] = DateTimeToUnixTimestamp(payload.IssuedAt.Value);
+
+            if (!string.IsNullOrEmpty(payload.JwtId))
+                claims["jti"] = payload.JwtId;
+
+            // Add custom claims
+            if (payload.CustomClaims != null)
+            {
+                foreach (var claim in payload.CustomClaims)
+                {
+                    claims[claim.Key] = claim.Value;
+                }
+            }
+
+            return SerializeToJson(claims);
+        }
+
+        /// <summary>
+        /// Serializes an object to JSON (simple implementation).
+        /// </summary>
+        private static string SerializeToJson(object obj)
+        {
+            if (obj == null)
+                return "{}";
+
+            var dict = obj as Dictionary<string, object>;
+            if (dict != null)
+            {
+                var parts = new List<string>();
+                foreach (var kvp in dict)
+                {
+                    var value = SerializeJsonValue(kvp.Value);
+                    parts.Add($"\"{kvp.Key}\":{value}");
+                }
+                return "{" + string.Join(",", parts) + "}";
+            }
+
+            // Handle anonymous objects using reflection
+            var type = obj.GetType();
+            var properties = type.GetProperties();
+            var jsonParts = new List<string>();
+
+            foreach (var prop in properties)
+            {
+                var value = prop.GetValue(obj);
+                var jsonValue = SerializeJsonValue(value);
+                jsonParts.Add($"\"{prop.Name}\":{jsonValue}");
+            }
+
+            return "{" + string.Join(",", jsonParts) + "}";
+        }
+
+        /// <summary>
+        /// Serializes a value to JSON format.
+        /// </summary>
+        private static string SerializeJsonValue(object value)
+        {
+            if (value == null)
+                return "null";
+
+            if (value is string str)
+                return $"\"{EscapeJsonString(str)}\"";
+
+            if (value is bool b)
+                return b ? "true" : "false";
+
+            if (value is int || value is long || value is double || value is decimal)
+                return value.ToString();
+
+            if (value is string[] strArray)
+            {
+                var arrayItems = strArray.Select(s => $"\"{EscapeJsonString(s)}\"");
+                return "[" + string.Join(",", arrayItems) + "]";
+            }
+
+            if (value is Array array)
+            {
+                var arrayItems = new List<string>();
+                foreach (var item in array)
+                {
+                    arrayItems.Add(SerializeJsonValue(item));
+                }
+                return "[" + string.Join(",", arrayItems) + "]";
+            }
+
+            // Fallback to ToString
+            return $"\"{EscapeJsonString(value.ToString())}\"";
+        }
+
+        /// <summary>
+        /// Escapes a string for JSON.
+        /// </summary>
+        private static string EscapeJsonString(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+                return string.Empty;
+
+            return input
+                .Replace("\\", "\\\\")
+                .Replace("\"", "\\\"")
+                .Replace("\r", "\\r")
+                .Replace("\n", "\\n")
+                .Replace("\t", "\\t");
+        }
+
+        /// <summary>
+        /// Converts DateTime to Unix timestamp.
+        /// </summary>
+        private static long DateTimeToUnixTimestamp(DateTime dateTime)
+        {
+            var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            var utcDateTime = dateTime.Kind == DateTimeKind.Utc ? dateTime : dateTime.ToUniversalTime();
+            return (long)(utcDateTime - epoch).TotalSeconds;
+        }
+
+        /// <summary>
+        /// Creates an HMAC-SHA256 signature.
+        /// </summary>
+        private static string CreateHmacSignature(string input, string secretKey)
+        {
+            var keyBytes = Encoding.UTF8.GetBytes(secretKey);
+            using (var hmac = new HMACSHA256(keyBytes))
+            {
+                var signatureBytes = hmac.ComputeHash(Encoding.UTF8.GetBytes(input));
+                return Base64UrlEncode(signatureBytes);
+            }
+        }
+
+        /// <summary>
+        /// Creates an RSA-SHA256 signature.
+        /// </summary>
+        private static string CreateRsaSignature(string input, string privateKeyXml)
+        {
+            using (var rsa = new RSACryptoServiceProvider())
+            {
+                rsa.FromXmlString(privateKeyXml);
+                var inputBytes = Encoding.UTF8.GetBytes(input);
+                var signatureBytes = rsa.SignData(inputBytes, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+                return Base64UrlEncode(signatureBytes);
+            }
         }
     }
 }

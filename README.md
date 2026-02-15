@@ -250,6 +250,56 @@ DateTime? issuedAt = ValidateJWT.GetIssuedAtUtc(token);
 
 **Returns:** `DateTime?` - Issued at time in UTC, or null if not found.
 
+#### `GetClaim<T>(jwt, claimName)`
+Extracts any claim from a JWT token with strong typing.
+
+```csharp
+// Extract string claims
+string subject = ValidateJWT.GetClaim<string>(token, "sub");
+string issuer = ValidateJWT.GetClaim<string>(token, "iss");
+
+// Extract numeric claims
+int age = ValidateJWT.GetClaim<int>(token, "age");
+long timestamp = ValidateJWT.GetClaim<long>(token, "exp");
+double score = ValidateJWT.GetClaim<double>(token, "score");
+
+// Extract boolean claims
+bool isPremium = ValidateJWT.GetClaim<bool>(token, "premium");
+
+// Extract DateTime claims (from Unix timestamps)
+DateTime? issuedAt = ValidateJWT.GetClaim<DateTime?>(token, "iat");
+
+// Extract array claims
+string[] roles = ValidateJWT.GetClaim<string[]>(token, "roles");
+
+// Extract nullable types
+int? optionalAge = ValidateJWT.GetClaim<int?>(token, "age");
+```
+
+**Parameters:**
+- `jwt` (string) - JWT token
+- `claimName` (string) - Name of the claim to extract
+
+**Returns:** `T` - The claim value converted to type T, or `default(T)` if not found or conversion fails.
+
+**Supported Types:**
+- `string` - Text values
+- `int`, `long`, `double`, `decimal` - Numeric values  
+- `bool` - Boolean values
+- `DateTime` - Unix timestamps converted to UTC DateTime
+- `string[]` - String arrays
+- Nullable versions of all above types
+
+#### `HasClaim(jwt, claimName)`
+Checks if a JWT token contains a specific claim.
+
+```csharp
+bool hasSubject = ValidateJWT.HasClaim(token, "sub");
+bool hasRoles = ValidateJWT.HasClaim(token, "roles");
+```
+
+**Returns:** `bool` - True if the claim exists, false otherwise.
+
 #### `GetAudience(jwt)`
 Extracts the 'aud' (audience) claim from a JWT token.
 
@@ -258,6 +308,77 @@ string audience = ValidateJWT.GetAudience(token);
 ```
 
 **Returns:** `string` - Audience value, or null if not found. For audience arrays, returns the first audience.
+
+---
+
+### JWT Generation Methods
+
+#### `CreateJwt(payload, secretKey)`
+Creates and signs a JWT token using HMAC-SHA256.
+
+```csharp
+var payload = new JwtPayload
+{
+    Subject = "user123",
+    Issuer = "https://my-app.com",
+    Audiences = new[] { "my-api" },
+    ExpiresAt = DateTime.UtcNow.AddHours(1),
+    IssuedAt = DateTime.UtcNow
+};
+
+string jwt = ValidateJWT.CreateJwt(payload, "your-secret-key");
+```
+
+#### `CreateJwtRS256(payload, privateKeyXml)`
+Creates and signs a JWT token using RSA-SHA256.
+
+```csharp
+string privateKey = "<RSAKeyValue>...</RSAKeyValue>";
+string jwt = ValidateJWT.CreateJwtRS256(payload, privateKey);
+```
+
+#### `CreateSimpleJwt(subject, issuer, audience, expiresInMinutes, secretKey)`
+Creates a simple JWT with basic claims.
+
+```csharp
+string jwt = ValidateJWT.CreateSimpleJwt(
+    "user123", 
+    "https://my-app.com", 
+    "my-api", 
+    60, // expires in 60 minutes
+    "your-secret-key"
+);
+```
+
+#### `JwtPayload` Class
+Represents a structured JWT payload with standard and custom claims.
+
+```csharp
+var payload = new JwtPayload
+{
+    // Standard claims
+    Issuer = "https://my-app.com",
+    Subject = "user123", 
+    Audiences = new[] { "api1", "api2" },
+    ExpiresAt = DateTime.UtcNow.AddHours(1),
+    NotBefore = DateTime.UtcNow,
+    IssuedAt = DateTime.UtcNow,
+    JwtId = "unique-token-id"
+};
+
+// Custom claims
+payload.CustomClaims["role"] = "admin";
+payload.CustomClaims["permissions"] = new[] { "read", "write" };
+payload.CustomClaims["age"] = 30;
+payload.CustomClaims["active"] = true;
+```
+
+**Supported Custom Claim Types:**
+- `string` - Text values
+- `int`, `long`, `double` - Numeric values
+- `bool` - Boolean values  
+- `string[]` - String arrays
+- Any object (serialized to JSON)
 
 ---
 
@@ -473,7 +594,30 @@ public void VerifySignature_ValidToken_ReturnsTrue()
 
 ## ?? Version History
 
-### v1.3.0 (Latest) ??
+### v1.5.0 (Latest) 🎯
+- Added **JWT Generation & Signing** - Complete JWT library
+  - `CreateJwt()` method for creating HS256-signed JWT tokens
+  - `CreateJwtRS256()` method for creating RS256-signed JWT tokens
+  - `CreateSimpleJwt()` for quick JWT creation with basic claims
+  - `JwtPayload` class for structured token creation
+  - Support for all standard JWT claims (iss, sub, aud, exp, nbf, iat, jti)
+  - Custom claims support with multiple data types
+  - Full round-trip compatibility (create → validate → extract)
+- Enhanced developer experience with complete JWT workflow
+- Comprehensive test coverage with 22 new tests (106 total tests)
+- All previous features retained
+
+### v1.4.0
+- Added **Generic Claim Extraction**
+  - `GetClaim<T>()` method for extracting any claim with strong typing
+  - `HasClaim()` method for checking claim existence  
+  - Support for string, numeric, boolean, DateTime, and array types
+  - Automatic type conversion and nullable type support
+- Enhanced developer experience with flexible claim access
+- Comprehensive test coverage with 18 new tests
+- All previous features retained
+
+### v1.3.0
 - Added comprehensive JWT claim validation
   - `IsAudienceValid()` for 'aud' claim validation (supports single and array formats)
   - `IsNotBeforeValid()` for 'nbf' claim validation  

@@ -5,6 +5,64 @@ All notable changes to the ValidateJWT project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - 2026-01-11
+
+### Added
+- **JWT Generation & Signing** - Complete JWT library functionality
+  - `CreateJwt(payload, secretKey)` method for creating HS256-signed JWT tokens
+  - `CreateJwtRS256(payload, privateKeyXml)` method for creating RS256-signed JWT tokens
+  - `CreateSimpleJwt()` method for quick JWT creation with basic claims
+  - `JwtPayload` class for structured token creation with standard and custom claims
+  - Support for all standard JWT claims:
+    - Issuer (`iss`), Subject (`sub`), Audience (`aud`)
+    - Expiration (`exp`), Not Before (`nbf`), Issued At (`iat`)
+    - JWT ID (`jti`)
+  - Custom claims support with multiple data types:
+    - String, numeric, boolean values
+    - String arrays and complex objects
+    - Automatic JSON serialization
+  - Full round-trip compatibility (generate → validate → extract claims)
+
+### Improved
+- Complete JWT workflow from generation to validation
+- Enhanced developer experience with structured payload creation
+- Robust JSON serialization with proper escaping
+- Comprehensive test coverage with 22 new unit tests (106 total tests)
+- Better API consistency across validation and generation methods
+
+### Compatibility
+- 100% backward compatible with all previous versions
+- All existing validation methods unchanged and fully supported
+- No breaking changes - new generation features are additive
+- Generated tokens work seamlessly with existing validation methods
+
+## [1.4.0] - 2026-01-11
+
+### Added
+- **Generic Claim Extraction** - Major enhancement for developer experience
+  - `GetClaim<T>(jwt, claimName)` method for extracting any JWT claim with strong typing
+  - `HasClaim(jwt, claimName)` method for checking if a claim exists
+  - Support for multiple data types:
+    - String claims (`GetClaim<string>`)
+    - Numeric claims (`GetClaim<int>`, `GetClaim<long>`, `GetClaim<double>`, `GetClaim<decimal>`)
+    - Boolean claims (`GetClaim<bool>`)
+    - DateTime claims (`GetClaim<DateTime>` - auto-converts Unix timestamps)
+    - Array claims (`GetClaim<string[]>`)
+    - Nullable versions of all types (`GetClaim<int?>`, etc.)
+  - Automatic type conversion with fallback to default values
+  - Robust JSON parsing for various claim formats
+
+### Improved
+- Enhanced developer experience with flexible, type-safe claim access
+- Simplified JWT inspection and debugging capabilities
+- Better error handling for malformed claim values
+- Comprehensive test coverage with 18 new unit tests (84 total tests)
+
+### Compatibility
+- 100% backward compatible with all previous versions
+- All existing methods unchanged and fully supported
+- No breaking changes - new features are additive
+
 ## [1.3.0] - 2026-01-11
 
 ### New Features
