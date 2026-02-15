@@ -154,6 +154,7 @@
     <Compile Include="ClaimValidationTests.cs" />
     <Compile Include="GetClaimTests.cs" />
     <Compile Include="JwtGenerationTests.cs" />
+
     <Compile Include="ValidateJWTTests.cs" />
     <Compile Include="Base64UrlDecodeTests.cs" />
     <Compile Include="JwtTestHelper.cs" />

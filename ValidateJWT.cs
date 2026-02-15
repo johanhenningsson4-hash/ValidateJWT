@@ -583,8 +583,8 @@ namespace Johan.Common
                 // Handle different value types
                 if (afterKey.StartsWith("\""))
                 {
-                    // String value
-                    var endIdx = afterKey.IndexOf('"', 1);
+                    // String value - need to properly handle escaped quotes
+                    var endIdx = FindStringEndIndex(afterKey);
                     if (endIdx == -1) return default(T);
                     var stringValue = afterKey.Substring(1, endIdx - 1);
                     return ConvertClaimValue<T>(stringValue, true);
@@ -656,6 +656,11 @@ namespace Johan.Common
                 // Handle string types
                 if (actualType == typeof(string))
                 {
+                    // If it's a string value from JSON, we need to unescape it
+                    if (isStringValue)
+                    {
+                        return (T)(object)UnescapeJsonString(value);
+                    }
                     return (T)(object)value;
                 }
 
@@ -740,7 +745,8 @@ namespace Johan.Common
                             }
                             else if (c == ',' && !inQuotes)
                             {
-                                elements.Add(current.ToString().Trim().Trim('"'));
+                                var element = current.ToString().Trim().Trim('"');
+                                elements.Add(UnescapeJsonString(element));
                                 current.Clear();
                             }
                             else if (!char.IsWhiteSpace(c) || inQuotes)
@@ -751,7 +757,8 @@ namespace Johan.Common
 
                         if (current.Length > 0)
                         {
-                            elements.Add(current.ToString().Trim().Trim('"'));
+                            var element = current.ToString().Trim().Trim('"');
+                            elements.Add(UnescapeJsonString(element));
                         }
 
                         return (T)(object)elements.ToArray();
@@ -1144,6 +1151,56 @@ namespace Johan.Common
                 .Replace("\r", "\\r")
                 .Replace("\n", "\\n")
                 .Replace("\t", "\\t");
+        }
+
+        /// <summary>
+        /// Finds the end index of a JSON string, properly handling escaped quotes.
+        /// </summary>
+        /// <param name="jsonString">JSON string starting with a quote</param>
+        /// <returns>Index of the closing quote, or -1 if not found</returns>
+        private static int FindStringEndIndex(string jsonString)
+        {
+            if (string.IsNullOrEmpty(jsonString) || !jsonString.StartsWith("\""))
+                return -1;
+
+            for (int i = 1; i < jsonString.Length; i++)
+            {
+                var c = jsonString[i];
+                if (c == '"')
+                {
+                    // Check if this quote is escaped
+                    int backslashCount = 0;
+                    for (int j = i - 1; j >= 0 && jsonString[j] == '\\'; j--)
+                    {
+                        backslashCount++;
+                    }
+
+                    // If even number of backslashes (including 0), the quote is not escaped
+                    if (backslashCount % 2 == 0)
+                    {
+                        return i;
+                    }
+                }
+            }
+
+            return -1; // Closing quote not found
+        }
+
+        /// <summary>
+        /// Unescapes a JSON string.
+        /// </summary>
+        private static string UnescapeJsonString(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+                return string.Empty;
+
+            // Order matters: unescape specific sequences first, then backslashes
+            return input
+                .Replace("\\\"", "\"")
+                .Replace("\\r", "\r")
+                .Replace("\\n", "\n")
+                .Replace("\\t", "\t")
+                .Replace("\\\\", "\\");
         }
 
         /// <summary>
