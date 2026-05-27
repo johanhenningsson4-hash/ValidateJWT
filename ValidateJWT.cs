@@ -179,6 +179,97 @@ namespace Johan.Common
         }
 
         /// <summary>
+        /// Checks if a JWT token should be renewed based on the time remaining until expiration.
+        /// </summary>
+        /// <param name="jwt">The JWT token string to check</param>
+        /// <param name="renewBeforeMinutes">Number of minutes before expiration when renewal should occur</param>
+        /// <param name="nowUtc">Optional current UTC time for testing purposes (default: DateTime.UtcNow)</param>
+        /// <returns>True if the token should be renewed (expires within the specified minutes); false otherwise</returns>
+        /// <remarks>
+        /// This method is useful for proactive token renewal before expiration.
+        /// For example, if renewBeforeMinutes is 5, the method returns true when the token has 5 or fewer minutes remaining.
+        /// Returns false if the token is already expired or if no expiration claim is found.
+        /// </remarks>
+        /// <example>
+        /// <code>
+        /// if (ValidateJWT.ShouldRenewToken(token, 5))
+        /// {
+        ///     // Token expires in 5 minutes or less, get a new one
+        ///     token = await GetNewTokenAsync();
+        /// }
+        /// </code>
+        /// </example>
+        public static bool ShouldRenewToken(string jwt, int renewBeforeMinutes, DateTime? nowUtc = null)
+        {
+            try
+            {
+                var now = nowUtc ?? DateTime.UtcNow;
+                var exp = GetExpirationUtc(jwt);
+
+                if (exp == null) return false;
+                if (exp.Value <= now) return false; // Already expired
+
+                var timeRemaining = exp.Value - now;
+                return timeRemaining.TotalMinutes <= renewBeforeMinutes;
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine($"ValidateJWT.ShouldRenewToken error: {ex.Message}");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Gets the time remaining until a JWT token should be renewed.
+        /// </summary>
+        /// <param name="jwt">The JWT token string to check</param>
+        /// <param name="renewBeforeMinutes">Number of minutes before expiration when renewal should occur</param>
+        /// <param name="nowUtc">Optional current UTC time for testing purposes (default: DateTime.UtcNow)</param>
+        /// <returns>TimeSpan until renewal is needed, or null if the token is invalid or should be renewed now</returns>
+        /// <remarks>
+        /// Returns null if:
+        /// - The token has no expiration claim
+        /// - The token is already expired
+        /// - The token should be renewed now (within renewBeforeMinutes window)
+        /// Use this method to schedule token renewal or display time until renewal.
+        /// </remarks>
+        /// <example>
+        /// <code>
+        /// var timeUntilRenewal = ValidateJWT.GetTimeUntilRenewal(token, 5);
+        /// if (timeUntilRenewal.HasValue)
+        /// {
+        ///     Console.WriteLine($"Token renewal needed in {timeUntilRenewal.Value.TotalMinutes:F1} minutes");
+        /// }
+        /// else
+        /// {
+        ///     Console.WriteLine("Token should be renewed now");
+        /// }
+        /// </code>
+        /// </example>
+        public static TimeSpan? GetTimeUntilRenewal(string jwt, int renewBeforeMinutes, DateTime? nowUtc = null)
+        {
+            try
+            {
+                var now = nowUtc ?? DateTime.UtcNow;
+                var exp = GetExpirationUtc(jwt);
+
+                if (exp == null) return null;
+                if (exp.Value <= now) return null; // Already expired
+
+                var renewalTime = exp.Value.AddMinutes(-renewBeforeMinutes);
+
+                if (now >= renewalTime) return null; // Should renew now
+
+                return renewalTime - now;
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine($"ValidateJWT.GetTimeUntilRenewal error: {ex.Message}");
+                return null;
+            }
+        }
+
+        /// <summary>
         /// Verifies the signature of a JWT token using HMAC-SHA256 (HS256) algorithm.
         /// </summary>
         /// <param name="jwt">The JWT token string to verify</param>

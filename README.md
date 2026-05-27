@@ -10,10 +10,11 @@ A lightweight .NET Framework 4.7.2 library for validating JWT (JSON Web Token) e
 ## ? Features
 
 - ? **Time-Based Validation** - Check JWT expiration with configurable clock skew
+- ? **Proactive Token Renewal** - Automatically renew tokens before expiration (NEW in v1.6.0)
 - ? **Signature Verification** - HMAC-SHA256 (HS256) and RSA-SHA256 (RS256) support
 - ? **Zero Dependencies** - Uses only built-in .NET Framework libraries
 - ? **Thread-Safe** - No shared mutable state
-- ? **Well-Tested** - 58+ unit tests with ~100% API coverage
+- ? **Well-Tested** - 138+ unit tests with ~100% API coverage
 - ? **Cross-Platform** - Works on x86, x64, and AnyCPU
 - ? **Fast & Lightweight** - Minimal overhead
 - ? **CI/CD Ready** - Automated testing and deployment
@@ -48,7 +49,7 @@ dotnet add package ValidateJWT
 
 ### PackageReference
 ```xml
-<PackageReference Include="ValidateJWT" Version="1.1.0" />
+<PackageReference Include="ValidateJWT" Version="1.6.0" />
 ```
 
 ## ?? Quick Start
@@ -102,6 +103,32 @@ else if (result.IsExpired)
 }
 ```
 
+### Proactive Token Renewal (Prevent Expiration) ? NEW
+
+```csharp
+using Johan.Common;
+
+var token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...";
+
+// Check if token should be renewed (5 minutes before expiration)
+if (ValidateJWT.ShouldRenewToken(token, 5))
+{
+    Console.WriteLine("? Token expires soon - getting new token");
+    token = await GetNewTokenFromAuthServiceAsync();
+}
+
+// Get time until renewal is needed
+var timeUntilRenewal = ValidateJWT.GetTimeUntilRenewal(token, 5);
+if (timeUntilRenewal.HasValue)
+{
+    Console.WriteLine($"? Token renewal in {timeUntilRenewal.Value.TotalMinutes:F1} minutes");
+}
+else
+{
+    Console.WriteLine("? Token should be renewed now");
+}
+```
+
 ## ?? API Reference
 
 ### Time-Based Validation Methods
@@ -142,6 +169,50 @@ DateTime? expiration = ValidateJWT.GetExpirationUtc(token);
 ```
 
 **Returns:** `DateTime?` - Expiration time in UTC, or null if not found
+
+---
+
+### Token Renewal Methods ? NEW
+
+#### `ShouldRenewToken(jwt, renewBeforeMinutes, nowUtc)`
+Checks if a JWT token should be renewed before it expires.
+
+```csharp
+bool needsRenewal = ValidateJWT.ShouldRenewToken(token, 5);
+bool needsRenewal = ValidateJWT.ShouldRenewToken(token, 10, DateTime.UtcNow);
+```
+
+**Parameters:**
+- `jwt` (string) - JWT token
+- `renewBeforeMinutes` (int) - Number of minutes before expiration to trigger renewal
+- `nowUtc` (DateTime?) - Current UTC time (default: DateTime.UtcNow)
+
+**Returns:** `bool` - True if token should be renewed, false otherwise
+
+**Use Case:** Proactively renew tokens before they expire to prevent authentication failures.
+
+---
+
+#### `GetTimeUntilRenewal(jwt, renewBeforeMinutes, nowUtc)`
+Gets the time remaining until a token should be renewed.
+
+```csharp
+TimeSpan? timeUntilRenewal = ValidateJWT.GetTimeUntilRenewal(token, 5);
+if (timeUntilRenewal.HasValue)
+{
+    // Schedule renewal
+    ScheduleTokenRenewal(timeUntilRenewal.Value);
+}
+```
+
+**Parameters:**
+- `jwt` (string) - JWT token
+- `renewBeforeMinutes` (int) - Number of minutes before expiration to trigger renewal
+- `nowUtc` (DateTime?) - Current UTC time (default: DateTime.UtcNow)
+
+**Returns:** `TimeSpan?` - Time until renewal needed, or null if renewal should happen now
+
+**Use Case:** Schedule automatic token renewal or display countdown to users.
 
 ---
 
@@ -777,9 +848,9 @@ For questions, issues, or feature requests:
 **Made with ?? for the .NET community**
 
 **Author:** Johan Henningsson  
-**Version:** 1.1.0  
+**Version:** 1.6.0  
 **Framework:** .NET Framework 4.7.2  
-**Last Updated:** January 2026  
+**Last Updated:** May 2026  
 **Status:** ? Production-Ready | ? CI/CD Enabled | ? Fully Automated
 
 ## ?? Build Instructions

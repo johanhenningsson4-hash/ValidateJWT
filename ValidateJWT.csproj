@@ -116,7 +116,10 @@
     <None Include="PublishRelease.bat" />
     <None Include="README.md" />
     <None Include="CHANGELOG.md" />
+    <None Include="RELEASE_NOTES_v1.6.0.md" />
+    <None Include="TokenRenewalExamples.md" />
     <None Include="ValidateJWT.nuspec" />
+    <None Include="VERSION_BUMP_SUMMARY.md" />
   </ItemGroup>
   <ItemGroup>
     <Content Include=".gitignore" />
